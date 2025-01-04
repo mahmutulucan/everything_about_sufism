@@ -1,0 +1,175 @@
+{% extends 'layout.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block title %}Search{% endblock title %}
+
+{% block description %}
+    Discover Sufism-related content with our search tool. Find articles, discussions, and resources.
+{% endblock description %}
+
+{% block keywords %}Search, Sufism Articles, Sufi Content, Sufi Resources{% endblock keywords %}
+
+{% block hero_title %}Search{% endblock hero_title %}
+
+{% block hero_subtitle %}
+    Find content matching your interests and expand your knowledge horizons!
+{% endblock hero_subtitle %}
+
+{% block content %}
+    <!-- Search Form Section -->
+    <div class="container">
+        <div class="bg-light p-5 rounded-lg m-3">
+            <div class="row">
+                <div class="col-md-5">
+                    <div class="card mb-3">
+                        <img class="card-img" 
+                            src="{% static 'img/search.jpg' %}" 
+                            alt="Illustration related to searching Sufism content">
+                    </div>
+                </div>
+                <div class="col-md-7">
+                    <form method="get" action="{% url 'search' %}">
+                        {% csrf_token %}
+                        {{ content_search_form|crispy }}
+                        <button type="submit" class="btn btn-primary">Search</button>
+                    </form>
+                </div> 
+            </div>
+        </div>
+    </div>
+
+    <!-- Search Results Section -->
+    <div class="container">
+        <div class="bg-light p-5 rounded-lg m-3">
+            <h2 class="display-5">Content Results</h2>
+            <hr>
+
+            <!-- Check if there are results to display -->
+            {% if page_obj %}
+                <!-- Loop through each content object and display its details -->
+                {% for content in page_obj.object_list %}
+                    <div class="card mb-3">
+                        <!-- Title of the content, linked to its detailed page -->
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">
+                                <a href="{% url 'content_detail' content.id %}" 
+                                    title="Click to view details of this content">
+                                    {{ content.title }}
+                                </a>
+                            </h5>
+                        </div>
+
+                        <!-- Basic information of the content -->
+                        <div class="card-body">
+                            <!-- The introduction of the content -->
+                            <p class="card-text">{{ content.introduction }}</p>
+
+                            <!-- The author's username and profile image (if available), otherwise a default image -->
+                            <p class="card-text">
+                                {% if content.author.profile.image %}
+                                    <img src="{{ content.author.profile.image.url }}" 
+                                        alt="Profile image of {{ content.author.username }}" 
+                                        class="img-thumbnail rounded-circle" 
+                                        style="width: 30px; height: 30px;">
+                                {% else %}
+                                    <img src="{% static 'img/default_profile_pic.jpg' %}" 
+                                        alt="Default Profile Image" 
+                                        class="img-thumbnail rounded-circle" 
+                                        style="width: 30px; height: 30px;">
+                                {% endif %}
+                                <small class="text-muted">
+                                    by 
+                                    {% if content.author %}
+                                        <a href="{% url 'profile_view' content.author.username %}" 
+                                            title="Click to view profile of {{ content.author.username }}">
+                                            {{ content.author.username }}
+                                        </a>
+                                    {% else %}
+                                        Deleted User
+                                    {% endif %}
+                                </small>
+                            </p>
+                        </div>
+                    </div>
+                {% endfor %}
+
+                <!-- Pagination Section -->
+                <div class="d-flex justify-content-center">
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination">
+                            {% if page_obj.has_previous %}
+                                <!-- First page navigation button -->
+                                <li class="page-item">
+                                    <!-- Long 'href': Exceeds 120 chars, kept intact for compatibility -->
+                                    <a class="page-link" 
+                                        href="?page=1{% if search_query %}&search_query={{ search_query }}{% endif %}{% if search_fields %}{% for field in search_fields %}&search_fields={{ field }}{% endfor %}{% endif %}{% if content_topic %}&content_topic={{ content_topic }}{% endif %}{% if content_type %}&content_type={{ content_type }}{% endif %}" 
+                                        aria-label="First">
+                                        <span aria-hidden="true">&laquo;&laquo;</span>
+                                    </a>
+                                </li>
+
+                                <!-- Previous page navigation button -->
+                                <li class="page-item">
+                                    <!-- Long 'href': Exceeds 120 chars, kept intact for compatibility -->
+                                    <a class="page-link" 
+                                        href="?page={{ page_obj.previous_page_number }}{% if search_query %}&search_query={{ search_query }}{% endif %}{% if search_fields %}{% for field in search_fields %}&search_fields={{ field }}{% endfor %}{% endif %}{% if content_topic %}&content_topic={{ content_topic }}{% endif %}{% if content_type %}&content_type={{ content_type }}{% endif %}" 
+                                        aria-label="Previous">
+                                        <span aria-hidden="true">&laquo;</span>
+                                    </a>
+                                </li>
+                            {% endif %}
+                            
+                            <!-- Loop through the available pages and display them -->
+                            {% for num in page_obj.paginator.page_range %}
+                                {% if page_obj.number == num %}
+                                    <!-- Highlight the current page -->
+                                    <li class="page-item active" aria-current="page">
+                                        <span class="page-link">{{ num }}</span>
+                                    </li>
+                                {% else %}
+                                    <!-- Links to other pages -->
+                                    <li class="page-item">
+                                        <!-- Long 'href': Exceeds 120 chars, kept intact for compatibility -->
+                                        <a class="page-link" 
+                                            href="?page={{ num }}{% if search_query %}&search_query={{ search_query }}{% endif %}{% if search_fields %}{% for field in search_fields %}&search_fields={{ field }}{% endfor %}{% endif %}{% if content_topic %}&content_topic={{ content_topic }}{% endif %}{% if content_type %}&content_type={{ content_type }}{% endif %}">
+                                            {{ num }}
+                                        </a>
+                                    </li>
+                                {% endif %}
+                            {% endfor %}
+
+                            {% if page_obj.has_next %}
+                                <!-- Next page navigation button -->
+                                <li class="page-item">
+                                    <!-- Long 'href': Exceeds 120 chars, kept intact for compatibility -->
+                                    <a class="page-link" 
+                                        href="?page={{ page_obj.next_page_number }}{% if search_query %}&search_query={{ search_query }}{% endif %}{% if search_fields %}{% for field in search_fields %}&search_fields={{ field }}{% endfor %}{% endif %}{% if content_topic %}&content_topic={{ content_topic }}{% endif %}{% if content_type %}&content_type={{ content_type }}{% endif %}" 
+                                        aria-label="Next">
+                                        <span aria-hidden="true">&raquo;</span>
+                                    </a>
+                                </li>
+
+                                <!-- Last page navigation button -->
+                                <li class="page-item">
+                                    <!-- Long 'href': Exceeds 120 chars, kept intact for compatibility -->
+                                    <a class="page-link" 
+                                        href="?page={{ page_obj.paginator.num_pages }}{% if search_query %}&search_query={{ search_query }}{% endif %}{% if search_fields %}{% for field in search_fields %}&search_fields={{ field }}{% endfor %}{% endif %}{% if content_topic %}&content_topic={{ content_topic }}{% endif %}{% if content_type %}&content_type={{ content_type }}{% endif %}" 
+                                        aria-label="Last">
+                                        <span aria-hidden="true">&raquo;&raquo;</span>
+                                    </a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                </div>
+
+            <!-- Display a message if no result is found -->
+            {% else %}
+                <div class="alert alert-warning" role="alert">
+                    <p>No content found. Please try adjusting your search criteria.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,36 @@
+{% extends "layout.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %}Edit Content - {{ content.title }}{% endblock title %}
+
+{% block robots %}noindex, nofollow{% endblock robots %}
+
+<!-- Additional head content for CKEditor -->
+{% block extra_head %}{{ form.media }}{% endblock extra_head %}
+
+{% block hero_title %}Welcome {{ user.username }}!{% endblock hero_title %}
+
+{% block hero_subtitle %}
+    Edit "{{ content.title }}". We're looking forward to seeing your updates on this content. 
+    Your edits will help improve and enrich the content for our readers.
+{% endblock hero_subtitle %}
+
+{% block content %}
+    <!-- Edit Content Form Section -->
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h4>Edit Content</h4>
+                </div>
+                <div class="card-body">
+                    <form action="{% url 'edit_content' content.id %}" method="POST" enctype="multipart/form-data" novalidate>
+                        {% csrf_token %}
+                        {{ form|crispy }}
+                        <button type="submit" class="btn btn-primary mt-4">Update</button>
+                    </form>        
+                </div>
+            </div>        
+        </div>
+    </div>
+{% endblock %}

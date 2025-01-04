@@ -1,0 +1,23 @@
+{% extends "layout.html" %}
+{% load static %}
+
+{% block title %}Delete Content - {{ content.title }}{% endblock title %}
+
+{% block robots %}noindex, nofollow{% endblock robots %}
+
+{% block hero_title %}Delete Content{% endblock hero_title %}
+
+{% block hero_subtitle %}Are you sure you want to delete "{{ content.title }}"?{% endblock hero_subtitle %}
+
+{% block hero_buttons %}
+    <div class="container">
+        <form id="delete-content-form" action="{% url 'delete_content' content.id %}" method="POST">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger" 
+                onclick="return confirm('Are you sure you want to delete this content?');">
+                Yes, delete it
+            </button>
+            <a href="{% url 'dashboard' %}" class="btn btn-secondary">Cancel</a>
+        </form>
+    </div>
+{% endblock hero_buttons %}

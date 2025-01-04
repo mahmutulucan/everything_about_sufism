@@ -1,0 +1,76 @@
+{% extends "layout.html" %}
+{% load static %}
+
+{% block title %}About{% endblock title %}
+
+{% block description %}
+    Learn about our platform's mission to explore Sufism and foster a respectful global community.
+{% endblock description %}
+
+{% block keywords %}Sufism, About Us, Our Mission, Sufi Community{% endblock keywords %}
+
+{% block hero_title %}About Us{% endblock hero_title %}
+
+{% block hero_subtitle %}Who are we? What do we do? What are our boundaries?{% endblock hero_subtitle %}
+
+{% block content %}
+    <!-- Content Section -->
+    <div class="row">
+        <div class="col-md-12">
+            <!-- Card component to display content in a structured way -->
+            <div class="card mb-3">
+                <div class="row">
+                    <!-- Image section on the left side of the card -->
+                    <div class="col-md-3">
+                        <img 
+                            class="card-img" 
+                            src="{% static 'img/history.jpg' %}" 
+                            alt="Historical mosque representing Sufi heritage.">
+                    </div>
+
+                    <!-- Main text content section on the right side of the card -->
+                    <div class="col-md-9">
+                        <!-- First card body about the nature of the platform -->
+                        <div class="card-body">
+                            <div class="card-title">
+                                <h4>Who are we?</h4>
+                            </div>
+                            <p class="card-text">
+                                We are a platform rooted in scientific inquiry and open-mindedness. Our mission 
+                                is to curate a comprehensive content archive covering all aspects of Sufism, 
+                                fostering an environment of respectful discussion around these topics.
+                            </p>
+                        </div>
+
+                        <!-- Second card body about the purpose of the platform -->
+                        <div class="card-body">
+                            <hr>
+                            <div class="card-title">
+                                <h4>So, how can we achieve this?</h4>
+                            </div>
+                            <p class="card-text">
+                                This will not be accomplished by us, but by you, our users, who become part of 
+                                the 'Everything About Sufism' community. In other words, this platform will 
+                                truly embody its name through the contributions of users like you, who join 
+                                our global family.
+                            </p>
+                        </div>
+
+                        <!-- Third card body about the boundaries of the platform -->
+                        <div class="card-body">
+                            <hr>
+                            <div class="card-title">
+                                <h4>What are our boundaries?</h4>
+                            </div>
+                            <p class="card-text">
+                                On this platform, no one will be silenced because of their opinions. While we 
+                                embrace 'free thought,' insults and hate speech are strictly prohibited. 
+                                Therefore, while we encourage open dialogue, disrespect is not tolerated.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}

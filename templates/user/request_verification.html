@@ -1,0 +1,38 @@
+{% extends 'layout.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Email Verification Request{% endblock %}
+
+{% block description %}
+    Verify your email to complete registration and access your account. Request a new code if needed.
+{% endblock description %}
+
+{% block keywords %}
+    email verify, verify email, email confirmation, account setup, resend code
+{% endblock keywords %}
+
+{% block hero_title %}Request Email Verification{% endblock hero_title %}
+
+{% block hero_subtitle %}
+    Enter your email address to check verification status or request a new verification code.
+{% endblock hero_subtitle %}
+
+{% block content %}
+    <!-- Request Email Verification Form Section -->
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h4>Email Verification Request</h4>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        {{ form|crispy }}
+                        <button type="submit" class="btn btn-primary btn-block">Submit</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

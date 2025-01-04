@@ -1,0 +1,218 @@
+<!-- Navbar Start: General Structure -->
+<nav class="navbar navbar-expand-lg bg-primary" data-bs-theme="dark" aria-label="Main navigation" role="navigation">
+    <div class="container-fluid">
+        <!-- Logo and Home Link -->
+        <a class="navbar-brand" href="/" title="Click to visit the homepage of Everything About Sufism">EAS</a>
+
+        <!-- Navbar Toggler: Button for mobile view -->
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" 
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation menu" 
+            title="Click to toggle the navigation menu">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- Navbar Content (Links) -->
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <!-- Left side: Main pages and categories -->
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <!-- Home Link -->
+                <li class="nav-item">
+                    <a href="{% url 'home' %}" class="nav-link {% if request.path == '/' %}active{% endif %}" 
+                        {% if request.path == '/' %}aria-current="page"{% endif %}>
+                        Home
+                    </a>
+                </li>
+
+                <!-- About Link -->
+                <li class="nav-item">
+                    <a href="{% url 'about' %}" class="nav-link {% if 'about' in request.path %}active{% endif %}" 
+                        {% if 'about' in request.path %}aria-current="page"{% endif %}>
+                        About
+                    </a>
+                </li>
+
+                <!-- History Link -->
+                <li class="nav-item">
+                    <a href="{% url 'content_topic_list' topic='history' %}" 
+                        class="nav-link {% if 'history' in request.path %}active{% endif %}" 
+                        {% if 'history' in request.path %}aria-current="page"{% endif %}>
+                        History
+                    </a>
+                </li>
+
+                <!-- Literature Link -->
+                <li class="nav-item">
+                    <a href="{% url 'content_topic_list' topic='literature' %}" 
+                        class="nav-link {% if 'literature' in request.path %}active{% endif %}" 
+                        {% if 'literature' in request.path %}aria-current="page"{% endif %}>
+                        Literature
+                    </a>
+                </li>
+
+                <!-- Concepts Link -->
+                <li class="nav-item">
+                    <a href="{% url 'content_topic_list' topic='concepts' %}" 
+                        class="nav-link {% if 'concepts' in request.path %}active{% endif %}" 
+                        {% if 'concepts' in request.path %}aria-current="page"{% endif %}>
+                        Concepts
+                    </a>
+                </li>
+
+                <!-- Sufis Link -->
+                <li class="nav-item">
+                    <a href="{% url 'content_topic_list' topic='sufis' %}" 
+                        class="nav-link {% if 'sufis' in request.path %}active{% endif %}" 
+                        {% if 'sufis' in request.path %}aria-current="page"{% endif %}>
+                        Sufis
+                    </a>
+                </li>
+
+                <!-- Sects Link -->
+                <li class="nav-item">
+                    <a href="{% url 'content_topic_list' topic='sects' %}" 
+                        class="nav-link {% if 'sects' in request.path %}active{% endif %}" 
+                        {% if 'sects' in request.path %}aria-current="page"{% endif %}>
+                        Sects
+                    </a>
+                </li>
+
+                <!-- Popular Topics Link -->
+                <li class="nav-item">
+                    <a href="{% url 'content_topic_list' topic='popular_topics' %}" 
+                        class="nav-link {% if 'popular_topics' in request.path %}active{% endif %}" 
+                        {% if 'popular_topics' in request.path %}aria-current="page"{% endif %}>
+                        Popular Topics
+                    </a>
+                </li>
+
+                <!-- All Contents Link -->
+                <li class="nav-item">
+                    <a href="{% url 'content_topic_list' topic='all_contents' %}" 
+                        class="nav-link {% if 'all_contents' in request.path %}active{% endif %}" 
+                        {% if 'all_contents' in request.path %}aria-current="page"{% endif %}>
+                        All Contents
+                    </a>
+                </li>
+            </ul>
+
+            <!-- Right side: Search and user actions -->
+            <ul class="navbar-nav ml-auto mb-2 mb-lg-0">
+                <!-- Search Link -->
+                <li class="nav-item">
+                    <a href="{% url 'search' %}" 
+                        class="nav-link {% if 'search' in request.path %}active{% endif %}" 
+                        {% if 'search' in request.path %}aria-current="page"{% endif %}>
+                        Search
+                    </a>
+                </li>
+
+                <!-- If the user is authenticated -->
+                {% if user.is_authenticated %}
+                    <!-- Notification link with unread count -->
+                    <li class="nav-item">
+                        <a href="{% url 'notification_list' %}" 
+                            class="nav-link {% if 'notification_list' in request.path %}active{% endif %}" 
+                            {% if 'notification_list' in request.path %}aria-current="page"{% endif %}>
+                            Notifications
+                            {% if request.unread_notifications_count > 0 %}
+                                <span class="badge bg-danger ms-2" 
+                                    title="You have {{ request.unread_notifications_count }} unread notifications">
+                                    {{ request.unread_notifications_count }}
+                                </span>
+                            {% endif %}
+                        </a>
+                    </li>
+
+                    <!-- Dashboard link -->
+                    <li class="nav-item">
+                        <a href="{% url 'dashboard' %}" 
+                            class="nav-link {% if 'dashboard' in request.path %}active{% endif %}" 
+                            {% if 'dashboard' in request.path %}aria-current="page"{% endif %}>
+                            Dashboard
+                        </a>
+                    </li>
+
+                    <!-- Messages link with unread count -->
+                    <!-- Long 'class': Exceeds 120 chars, kept intact for compatibility -->
+                    <li class="nav-item dropdown {% if 'message' in request.path or box_type == 'inbox' or box_type == 'outbox' %}active{% endif %}">
+                        <!-- Long 'class': Exceeds 120 chars, kept intact for compatibility -->
+                        <a class="nav-link dropdown-toggle {% if 'message' in request.path or box_type == 'inbox' or box_type == 'outbox' %}active{% endif %}" 
+                            href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" 
+                            title="Messages: Send a message, view inbox, or view outbox">
+                            Messages
+                            {% if request.unread_count > 0 %}
+                                <span class="badge bg-danger ms-2" 
+                                    title="You have {{ request.unread_count }} unread messages">
+                                    {{ request.unread_count }}
+                                </span>
+                            {% endif %}
+                        </a>
+
+                        <!-- Dropdown menu for messages -->
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <!-- Send Message link -->
+                            <li>
+                                <a class="dropdown-item {% if 'message' in request.path %}active{% endif %}" 
+                                    href="{% url 'send_message' %}">
+                                    Send a Message
+                                </a>
+                            </li>
+
+                            <!-- Inbox link with unread count -->
+                            <li>
+                                <a class="dropdown-item {% if box_type == 'inbox' %}active{% endif %}" 
+                                    href="{% url 'message_list' box_type='inbox' %}">
+                                    Inbox
+                                    {% if request.unread_count > 0 %}
+                                        <span class="badge bg-danger ms-2"
+                                            title="You have {{ request.unread_count }} unread messages">
+                                            {{ request.unread_count }}
+                                        </span>
+                                    {% endif %}
+                                </a>
+                            </li>
+
+                            <!-- Outbox link -->
+                            <li>
+                                <a class="dropdown-item {% if box_type == 'outbox' %}active{% endif %}" 
+                                    href="{% url 'message_list' box_type='outbox' %}">
+                                    Outbox
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <!-- Logout link -->
+                    <li class="nav-item">
+                        <form action="{% url 'logout' %}" method="post">
+                            {% csrf_token %}
+                            <button type="submit" class="nav-link btn btn-link text-muted">
+                                ({{ request.user.username }}) Logout
+                            </button>
+                        </form>
+                    </li>
+                
+                <!-- If the user is not authenticated -->
+                {% else %}
+                    <!-- Login link -->
+                    <li class="nav-item">
+                        <a href="{% url 'login' %}" 
+                            class="nav-link {% if 'login' in request.path %}active{% endif %}" 
+                            {% if 'login' in request.path %}aria-current="page"{% endif %}>
+                            Login
+                        </a>
+                    </li>
+
+                    <!-- Register link -->
+                    <li class="nav-item">
+                        <a href="{% url 'register' %}" 
+                            class="nav-link {% if 'register' in request.path %}active{% endif %}" 
+                            {% if 'register' in request.path %}aria-current="page"{% endif %}>
+                            Register
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>

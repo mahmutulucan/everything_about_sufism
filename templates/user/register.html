@@ -1,0 +1,47 @@
+{% extends "layout.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %}Register{% endblock %}
+
+{% block description %}
+    Register to join our community, share your insights, and engage in discussions on Sufism and spirituality.
+{% endblock description %}
+
+{% block keywords %}
+    register, tasawwuf, sufism, spirituality, islamic mysticism, community, discussions, articles
+{% endblock keywords %}
+
+{% block hero_title %}Join Us Today!{% endblock hero_title %}
+
+{% block hero_subtitle %}
+    Create an account to share your contents and become a part of our vibrant community.
+{% endblock hero_subtitle %}
+
+{% block content %}
+    <!-- Registration form section with helpful links to the login and request verification pages -->
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h4>Register</h4>
+                </div>
+                <div class="card-body">
+                    <form action="{% url 'register' %}" method="POST" novalidate>
+                        {% csrf_token %}
+                        {{ form|crispy }}
+                        <button type="submit" class="btn btn-primary btn-block">Register</button>
+                        <hr>
+                        <p>
+                            If you are already a member, <a href="{% url 'login' %}">click here</a> to login.
+                        </p>
+                        <p>
+                            After registration, you will receive a verification code at your email. 
+                            Please <a href="{% url 'request_verification' %}">click here</a> 
+                            if you need to request a new verification code or if you have not received it.
+                        </p>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

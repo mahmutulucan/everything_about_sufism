@@ -1,0 +1,190 @@
+{% extends "layout.html" %}
+{% load static %}
+
+{% block title %}{{ user.username }}'s {{ follow_type|capfirst }}{% endblock %}
+
+{% block robots %}noindex, nofollow{% endblock robots %}
+
+{% block hero_title %}
+    {% if request.user == user %}
+        {% if follow_type == 'followers' %}
+            Your Followers, {{ user.username }}!
+        {% elif follow_type == 'following' %}
+            People You Follow, {{ user.username }}!
+        {% endif %}
+    {% else %}
+        {% if follow_type == 'followers' %}
+            {{ user.username }}'s Followers
+        {% elif follow_type == 'following' %}
+            {{ user.username }}'s Following
+        {% endif %}
+    {% endif %}
+{% endblock hero_title %}
+
+{% block hero_subtitle %}
+    {% if request.user == user %}
+        {% if follow_type == 'followers' %}
+            These amazing individuals are inspired by you and your journey. Keep shining and leading the way!
+        {% elif follow_type == 'following' %}
+            Explore the individuals who fuel your inspiration and contribute to your growth. 
+            Stay connected and inspired!
+        {% endif %}
+    {% else %}
+        {% if follow_type == 'followers' %}
+            Discover the wonderful people who are part of {{ user.username }}'s journey. 
+            Each follower represents a step towards new possibilities and inspiration!
+        {% elif follow_type == 'following' %}
+            Explore the dynamic individuals that {{ user.username }} follows. 
+            Each connection opens doors to fresh perspectives and opportunities!
+        {% endif %}
+    {% endif %}
+{% endblock hero_subtitle %}
+
+{% block content %}
+    <!-- Table section: Displays followers/following if avaible -->
+    {% if page_obj.object_list %}
+        <div class="table-responsive bg-light p-3 rounded-lg m-3">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th scope="col">Profile Image</th>
+                        <th scope="col">Username</th>
+                        <th scope="col">View Profile</th>
+                        <th scope="col">View Followers</th>
+                        <th scope="col">View Following</th>
+                        <th scope="col">Follow Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in page_obj %}
+                        <tr>
+                            <!-- Profile Image -->
+                            <td>
+                                {% if item.user.profile.image %}
+                                    <img src="{{ item.user.profile.image.url }}" alt="Profile Image" 
+                                        class="img-thumbnail rounded-circle" style="width: 30px; height: 30px;">
+                                {% else %}
+                                    <img src="{% static 'img/default_profile_pic.jpg' %}" alt="Default Profile Image" 
+                                        class="img-thumbnail rounded-circle" style="width: 30px; height: 30px;">
+                                {% endif %}
+                            </td>
+
+                            <!-- Username -->
+                            <td>
+                                {{ item.user.username }}
+                            </td>
+
+                            <!-- View Profile Button -->
+                            <td>
+                                <a href="{% url 'profile_view' item.user.username %}" 
+                                    class="btn btn-primary btn-sm d-inline">
+                                    View
+                                </a>
+                            </td>
+
+                            <!-- View Followers -->
+                            <td>
+                                <a href="{% url 'follow_list' username=item.user.username follow_type='followers' %}" 
+                                    class="btn btn-primary btn-sm d-inline">
+                                    Followers ({{ item.user.followers.count }})
+                                </a>
+                            </td>
+
+                            <!-- View Following -->
+                            <td>
+                                <a href="{% url 'follow_list' username=item.user.username follow_type='following' %}" 
+                                    class="btn btn-primary btn-sm d-inline">
+                                    Following ({{ item.user.following.count }})
+                                </a>
+                            </td>
+
+                            <!-- Follow/Unfollow Action -->
+                            <td>
+                                {% if request.user != item.user %}
+                                    {% if item.is_following %}
+                                        {% with action='unfollow' %}
+                                            <!-- Unfollow Form -->
+                                            <!-- Long 'action': Exceeds 120 chars, kept intact for compatibility -->
+                                            <form method="post" 
+                                                action="{% url 'follow_view' username=item.user.username action=action %}" 
+                                                class="d-inline">
+                                                {% csrf_token %}
+                                                <button type="submit" class="btn btn-danger btn-sm d-inline">
+                                                    Unfollow
+                                                </button>
+                                            </form>
+                                        {% endwith %}
+                                    {% else %}
+                                        {% with action='follow' %}
+                                            <!-- Follow Form -->
+                                            <!-- Long 'action': Exceeds 120 chars, kept intact for compatibility -->
+                                            <form method="post" 
+                                                action="{% url 'follow_view' username=item.user.username action=action %}" 
+                                                class="d-inline">
+                                                {% csrf_token %}
+                                                <button type="submit" class="btn btn-primary btn-sm d-inline">
+                                                    Follow
+                                                </button>
+                                            </form>
+                                        {% endwith %}
+                                    {% endif %}
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination: Allows navigation through pages of followers/following -->
+        <nav aria-label="Page navigation">
+            <ul class="pagination justify-content-center">
+                {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                {% endif %}
+
+                {% for num in page_obj.paginator.page_range %}
+                    <li class="page-item {% if page_obj.number == num %}active{% endif %}">
+                        <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                    </li>
+                {% endfor %}
+                
+                {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.next_page_number }}" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+
+    <!-- Alert for No Followers/Following -->
+    {% else %}
+        <div class="alert alert-warning" role="alert">
+            <p>
+                {% if request.user == user %}
+                    {% if follow_type == 'followers' %}
+                        You currently have no followers. Keep sharing your knowledge 
+                        and experiences—your first followers are just around the corner, eager to learn from you!
+                    {% elif follow_type == 'following' %}
+                        You are not following anyone yet. 
+                        Explore and connect with inspiring individuals—your network is waiting to grow!
+                    {% endif %}
+                {% else %}
+                    {% if follow_type == 'followers' %}
+                        Be the first to follow {{ user.username }} and show your support! 
+                        Start this journey and be part of their growing community.
+                    {% elif follow_type == 'following' %}
+                        {{ user.username }} isn't following anyone yet. 
+                        Discover and connect with them to help build their network and make new connections!
+                    {% endif %}
+                {% endif %}
+            </p>        
+        </div>
+    {% endif %}
+{% endblock %}

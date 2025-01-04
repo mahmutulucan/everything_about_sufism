@@ -1,0 +1,38 @@
+{% extends "layout.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %}Contact Us{% endblock title %}
+
+{% block description %}Reach out to share your thoughts, questions, and feedback on Sufism.{% endblock description %}
+
+{% block keywords %}
+    Contact Us, Sufism, Sufi Community, Feedback, Sufi Platform Contact, Reach Out
+{% endblock keywords %}
+
+{% block hero_title %}Contact Us{% endblock hero_title %}
+
+{% block hero_subtitle %}
+    Your voice matters to us, and we are always eager to hear from you. 
+    Whether you have questions, feedback, or just want to share your thoughts, 
+    don't hesitate to reach out. Connect with us and let's start a conversation!
+{% endblock hero_subtitle %}
+
+{% block content %}
+    <!-- Contact Form Section -->
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h4>Contact Form</h4>
+                </div>
+                <div class="card-body">
+                    <form action="{% url 'contact' %}" method="POST" novalidate>
+                        {% csrf_token %}
+                        {{ form|crispy }}
+                        <button type="submit" class="btn btn-primary btn-block">Send</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}

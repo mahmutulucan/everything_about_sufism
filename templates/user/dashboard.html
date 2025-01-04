@@ -1,0 +1,241 @@
+{% extends "layout.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block robots %}noindex, nofollow{% endblock robots %}
+
+{% block hero_title %}User Dashboard & Content Management{% endblock hero_title %}
+
+{% block hero_subtitle %}
+    Welcome, {{ user.username }}! Here, you have full control over your contents. 
+    View, edit, or delete them with ease. This is your space.
+{% endblock hero_subtitle %}
+
+{% block hero_buttons %}
+    <!-- Filtering options container: Includes filter form and action buttons (Add Content, View Profile). -->
+    <div class="container">
+        <div class="d-flex justify-content-start align-items-center mb-3">
+            <!-- Form for selecting content type to filter -->
+            <form action="{% url 'dashboard' %}" method="get" class="d-inline-block me-2">
+                <div class="dropdown">
+                    <!-- Button to display and select content types -->
+                    {% with content_type as current_type %}
+                        <button class="btn btn-primary dropdown-toggle" type="button" 
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            <!-- Display the selected content type or default message -->
+                            {% if current_type %}
+                                {% if current_type == "academic_article" %}Academic Article
+                                {% elif current_type == "insightful_essay" %}Insightful Essay
+                                {% elif current_type == "sufi_experience" %}Sufi Experience
+                                {% elif current_type == "question_answer" %}Question-Answer
+                                {% elif current_type == "book_review" %}Book/Article Review
+                                {% else %}Select content type
+                                {% endif %}
+                            {% else %}
+                                Select content type
+                            {% endif %}
+                        </button>
+                    {% endwith %}
+
+                    <!-- List of all content type options -->
+                    <ul class="dropdown-menu">
+                        <li>
+                            <button type="submit" class="dropdown-item" 
+                                name="content_type" value="">
+                                All Types
+                            </button>
+                        </li>
+                        <li>
+                            <button type="submit" class="dropdown-item" 
+                                name="content_type" value="academic_article">
+                                Academic Article
+                            </button>
+                        </li>
+                        <li>
+                            <button type="submit" class="dropdown-item" 
+                                name="content_type" value="insightful_essay">
+                                Insightful Essay
+                            </button>
+                        </li>
+                        <li>
+                            <button type="submit" class="dropdown-item" 
+                                name="content_type" value="sufi_experience">
+                                Sufi Experience
+                            </button>
+                        </li>
+                        <li>
+                            <button type="submit" class="dropdown-item" 
+                                name="content_type" value="question_answer">
+                                Question-Answer
+                            </button>
+                        </li>
+                        <li>
+                            <button type="submit" class="dropdown-item" 
+                                name="content_type" value="book_review">
+                                Book/Article Review
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+            </form>
+
+            <!-- Show "Add Content" and "View Profile" buttons -->
+            <a href="{% url 'add_content' %}" class="btn btn-primary me-2">Add Content</a>
+            <a href="{% url 'profile_view' user.username %}" class="btn btn-primary">View Your Profile</a>
+        </div>
+    </div>
+{% endblock hero_buttons %}
+
+{% block content %}
+    <!-- Content Section -->
+    <div class="row">
+        <div class="col-md-12">
+            <!-- If the dashboard owner has content, display the list of their content -->
+            {% if page_obj %}
+                <!-- Paginated content cards: Displays only the logged-in user's content -->
+                {% for content in page_obj.object_list %}
+                    <div class="card mb-3">
+                        <div class="row">
+                            <!-- Content image -->
+                            <div class="col-md-3">
+                                <a href="{% url 'content_detail' content.id %}" class="card-img">
+                                    {% if content.content_image %}
+                                        <img src="{{ content.content_image.url }}" class="card-img" 
+                                            alt="Content Image" 
+                                            title="Click to view details of this content">
+                                    {% else %}
+                                        <img src="{% static content.get_image_url %}" class="card-img" 
+                                            alt="Default Content Image" 
+                                            title="Click to view details of this content">
+                                    {% endif %}
+                                </a>
+                            </div>
+
+                            <!-- Content Details Section -->
+                            <div class="col-md-9">
+                                <div class="card-body">
+                                    <!-- Title and brief introduction of the content -->
+                                    <div class="card-title"><h2>{{ content.title }}</h2></div>
+                                    <p class="card-text">{{ content.introduction }}</p>
+
+                                    <!-- Author's profile image or default image -->
+                                    <p class="card-text">
+                                        {% if content.author.profile.image %}
+                                            <img src="{{ content.author.profile.image.url }}" 
+                                                alt="Profile image of {{ content.author.username }}" 
+                                                class="img-thumbnail rounded-circle" 
+                                                style="width: 30px; height: 30px;">
+                                        {% else %}
+                                            <img src="{% static 'img/default_profile_pic.jpg' %}" 
+                                                alt="Default Profile Image" 
+                                                class="img-thumbnail rounded-circle" 
+                                                style="width: 30px; height: 30px;">
+                                        {% endif %}
+                                        <small class="text-muted">by {{ content.author }}</small>
+                                    </p>
+
+                                    <!-- Topic, content type, and language metadata -->
+                                    <p class="card-text">
+                                        <small class="text-muted">
+                                            {{ content.get_topic_display }} - 
+                                            {{ content.get_content_type_display }} - 
+                                            {{ content.get_language_display }}
+                                        </small>
+                                    </p>
+
+                                    <!-- Content creation date -->
+                                    <p class="card-text">
+                                        <small class="text-muted">{{ content.created_date }}</small>
+                                    </p>
+
+                                    <!-- View and like counts -->
+                                    <p class="card-text">
+                                        <small class="text-muted">
+                                            {{ content.views_count }} Views, {{ content.like_count }} Likes
+                                        </small>
+                                    </p>
+
+                                    <!-- Edit/Delete options: Only visible to the content owner -->
+                                    {% if content.author == user %}
+                                        <a href="{% url 'edit_content' content.id %}" class="btn btn-primary">
+                                            Edit
+                                        </a>
+                                        <a href="{% url 'delete_content' content.id %}" class="btn btn-danger">
+                                            Delete
+                                        </a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+
+                <!-- Pagination controls -->
+                <div class="d-flex justify-content-center">
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination">
+                            {% if page_obj.has_previous %}
+                                <li class="page-item">
+                                    <a class="page-link" 
+                                        href="?page=1{% if content_type %}&content_type={{ content_type }}{% endif %}" 
+                                        aria-label="First">
+                                        <span aria-hidden="true">&laquo;&laquo;</span>
+                                    </a>
+                                </li>
+                                <li class="page-item">
+                                    <!-- Long 'href': Exceeds 120 chars, kept intact for compatibility -->
+                                    <a class="page-link" 
+                                        href="?page={{ page_obj.previous_page_number }}{% if content_type %}&content_type={{ content_type }}{% endif %}" 
+                                        aria-label="Previous">
+                                        <span aria-hidden="true">&laquo;</span>
+                                    </a>
+                                </li>
+                            {% endif %}
+
+                            {% for num in page_obj.paginator.page_range %}
+                                {% if page_obj.number == num %}
+                                    <li class="page-item active" aria-current="page">
+                                        <span class="page-link">{{ num }}</span>
+                                    </li>
+                                {% else %}
+                                    <li class="page-item">
+                                        <!-- Long 'href': Exceeds 120 chars, kept intact for compatibility -->
+                                        <a class="page-link" 
+                                            href="?page={{ num }}{% if content_type %}&content_type={{ content_type }}{% endif %}">
+                                            {{ num }}
+                                        </a>
+                                    </li>
+                                {% endif %}
+                            {% endfor %}
+
+                            {% if page_obj.has_next %}
+                                <li class="page-item">
+                                    <!-- Long 'href': Exceeds 120 chars, kept intact for compatibility -->
+                                    <a class="page-link" 
+                                        href="?page={{ page_obj.next_page_number }}{% if content_type %}&content_type={{ content_type }}{% endif %}" 
+                                        aria-label="Next">
+                                        <span aria-hidden="true">&raquo;</span>
+                                    </a>
+                                </li>
+                                <li class="page-item">
+                                    <!-- Long 'href': Exceeds 120 chars, kept intact for compatibility -->
+                                    <a class="page-link" 
+                                        href="?page={{ page_obj.paginator.num_pages }}{% if content_type %}&content_type={{ content_type }}{% endif %}" 
+                                        aria-label="Last">
+                                        <span aria-hidden="true">&raquo;&raquo;</span>
+                                    </a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                </div>
+
+            <!-- If the dashboard owner has no content, show a message -->
+            {% else %}
+                <div class="alert alert-warning"><p>You haven't added any content yet.</p></div>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

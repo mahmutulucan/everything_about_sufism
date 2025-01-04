@@ -1,0 +1,39 @@
+{% extends "layout.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %}Send a Message{% endblock %}
+
+{% block robots %}noindex, nofollow{% endblock robots %}
+
+<!-- Additional head content for CKEditor -->
+{% block extra_head %}{{ form.media }}{% endblock extra_head %}
+
+{% block hero_title %}
+    Welcome {{ user.username }}!
+{% endblock hero_title %}
+
+{% block hero_subtitle %}
+    You can send a message to another user using the form below. 
+    Simply select the recipient, enter your subject and message, and click "Send".
+{% endblock hero_subtitle %}
+
+
+{% block content %}
+    <!-- Send Message Form Section -->
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h4>Send a Message</h4>
+                </div>
+                <div class="card-body">
+                    <form method="POST" novalidate>
+                        {% csrf_token %}
+                        {{ form|crispy }}
+                        <button type="submit" class="btn btn-primary btn-block">Send</button>
+                    </form>        
+                </div>
+            </div>        
+        </div>
+    </div>
+{% endblock %}

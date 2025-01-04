@@ -1,0 +1,61 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        <title>{% block title %}Everything About Sufism{% endblock title %}</title>
+
+        <!-- Robots meta tag, to be overridden on specific pages -->
+        <meta name="robots" content="{% block robots %}index, follow{% endblock robots %}">
+
+        <!-- Default description, can be overridden in child templates -->
+        <meta name="description" content="{% block description %}{% endblock description %}">
+
+        <!-- Default SEO keywords, can be dynamically set -->
+        <meta name="keywords" content="{% block keywords %}{% endblock keywords %}">
+        
+        <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+        <link href="{% static 'favicon.ico' %}" rel="icon" type="image/x-icon">
+        
+        <!-- Additional head content (e.g., CKEditor media) -->
+        {% block extra_head %}{% endblock extra_head %}
+    </head>
+
+    <body class="d-flex flex-column min-vh-100">
+        <header>
+            <!-- Navbar -->
+            {% include "partials/_navbar.html" %}
+        </header>
+
+        <main class="flex-grow-1">
+            <!-- Displays success, warning, and informational messages -->
+            {% include "partials/_alert.html" %}
+
+            <div class="container mt-4">
+                <!-- Hero section -->
+                <div class="bg-light p-5 rounded-lg m-3">
+                    <!-- Hero title and subtitle -->
+                    <h1 class="display-3">{% block hero_title %}{% endblock hero_title %}</h1>
+                    <p class="lead">{% block hero_subtitle %}{% endblock hero_subtitle %}</p>
+
+                    <!-- Extra content (optional) -->
+                    {% block hero_extra %}{% endblock hero_extra %}
+
+                    <!-- Hero buttons (optional) -->
+                    {% block hero_buttons %}{% endblock hero_buttons %}
+                </div>
+
+                <!-- Main content goes here -->
+                {% block content %}{% endblock content %}
+            </div>
+        </main>
+
+        <!-- Footer content like copyright and links -->
+        <footer class="bg-light border-top mt-4 py-3">{% include "partials/_footer.html" %}</footer>
+
+        <script src="{% static 'js/bootstrap.bundle.min.js' %}" defer></script>
+    </body>
+</html>

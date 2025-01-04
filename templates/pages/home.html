@@ -1,0 +1,173 @@
+{% extends "layout.html" %}
+{% load static %}
+
+{% block title %}Home: Welcome to Everything About Sufism{% endblock title %}
+
+{% block description %}
+    Explore and share Sufism's history, literature, concepts, and more on our platform.
+{% endblock description %}
+
+{% block keywords %}
+    Sufism, Everything About Sufism, Sufi History, Sufi Literature, Sufi Concepts, Sufi Sects, Popular Sufism Topics
+{% endblock keywords %}
+
+{% block hero_title %}Everything About Sufism{% endblock hero_title %}
+
+{% block hero_subtitle %}A platform where you can explore and share everything about Sufism{% endblock hero_subtitle %}
+
+{% block content %}
+    <!-- Content Section -->
+    <div class="row">
+        <!-- Left Column -->
+        <div class="col-md-6">
+            <!-- History Card -->
+            <div class="card mb-3">
+                <div class="row">
+                    <div class="col-md-3">
+                        <a href="{% url 'content_topic_list' topic='history' %}" class="card-img">
+                            <img class="card-img" 
+                                src="{% static 'img/history.jpg' %}" 
+                                alt="Historical mosque representing Sufi heritage." 
+                                title="Click to view the History topic of Sufism.">
+                        </a>
+                    </div>
+                    <div class="col-md-9">
+                        <div class="card-body">
+                            <div class="card-title">
+                                <h2>History</h2>
+                            </div>
+                            <p class="card-text">
+                                The challenge of categorizing the history of Sufism into periods, 
+                                the evolution of Sufi thought throughout history, and related issues...
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sufis Card -->
+            <div class="card mb-3">
+                <div class="row">
+                    <div class="col-md-3">
+                        <a href="{% url 'content_topic_list' topic='sufis' %}" class="card-img">
+                            <img class="card-img" 
+                                src="{% static 'img/sufis.jpg' %}" 
+                                alt="Mevlevi dervishes symbolizing Sufi practices." 
+                                title="Click to view the Sufis topic of Sufism.">
+                        </a>
+                    </div>
+                    <div class="col-md-9">
+                        <div class="card-body">
+                            <div class="card-title">
+                                <h2>Sufis</h2>
+                            </div>
+                            <p class="card-text">
+                                Ascetics and Sufis who have shaped Sufi thought and life 
+                                from the early period to the present day...
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sects Card -->
+            <div class="card mb-3">
+                <div class="row">
+                    <div class="col-md-3">
+                        <a href="{% url 'content_topic_list' topic='sects' %}" class="card-img">
+                            <img class="card-img" 
+                                src="{% static 'img/sects.jpg' %}" 
+                                alt="Mevlevi dervishes symbolizing Sufi sects." 
+                                title="Click to view the Sects topic of Sufism.">
+                        </a>
+                    </div>
+                    <div class="col-md-9">
+                        <div class="card-body">
+                            <div class="card-title">
+                                <h2>Sects</h2>
+                            </div>
+                            <p class="card-text">
+                                All Sufi sects, their emergence, development, principles, rituals, and related topics...
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column -->
+        <div class="col-md-6">
+            <!-- Literature Card -->
+            <div class="card mb-3">
+                <div class="row">
+                    <div class="col-md-3">
+                        <a href="{% url 'content_topic_list' topic='literature' %}" class="card-img">
+                            <img class="card-img" 
+                                src="{% static 'img/literature.jpg' %}" 
+                                alt="Library representing Sufi literature." 
+                                title="Click to view the Literature topic of Sufism.">
+                        </a>
+                    </div>
+                    <div class="col-md-9">
+                        <div class="card-body">
+                            <div class="card-title">
+                                <h2>Literature</h2>
+                            </div>
+                            <p class="card-text">
+                                All books written about Sufism throughout history...
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Concepts Card -->
+            <div class="card mb-3">
+                <div class="row">
+                    <div class="col-md-3">
+                        <a href="{% url 'content_topic_list' topic='concepts' %}" class="card-img">
+                            <img class="card-img" 
+                                src="{% static 'img/concepts.jpg' %}" 
+                                alt="Open books symbolizing Sufi philosophy." 
+                                title="Click to view the Concepts topic of Sufism.">
+                        </a>
+                    </div>
+                    <div class="col-md-9">
+                        <div class="card-body">
+                            <div class="card-title">
+                                <h2>Concepts</h2>
+                            </div>
+                            <p class="card-text">
+                                All concepts pertaining to Sufi philosophy...
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Popular Topics Card -->
+            <div class="card mb-3">
+                <div class="row">
+                    <div class="col-md-3">
+                        <a href="{% url 'content_topic_list' topic='popular_topics' %}" class="card-img">
+                            <img class="card-img" 
+                                src="{% static 'img/popular_topics.jpg' %}" 
+                                alt="Mevlevi dervish spinning symbolizing popular Sufi topics." 
+                                title="Click to view the Popular Topics of Sufism.">
+                        </a>
+                    </div>
+                    <div class="col-md-9">
+                        <div class="card-body">
+                            <div class="card-title">
+                                <h2>Popular Topics</h2>
+                            </div>
+                            <p class="card-text">
+                                All individuals, contemporary questions, and issues evoked by the mention of Sufism...
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}

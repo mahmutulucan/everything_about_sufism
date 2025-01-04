@@ -1,0 +1,383 @@
+{% extends "layout.html" %}
+{% load static %}
+
+{% block title %}{{ user.username }}'s Profile{% endblock %}
+
+{% block robots %}noindex, nofollow{% endblock robots %}
+
+{% block hero_title %}
+    {% if request.user == user %}
+        Welcome to your profile, {{ user.username }}!
+    {% else %}
+        You are now exploring {{ user.username }}'s profile!
+    {% endif %}
+{% endblock hero_title %}
+    
+{% block hero_subtitle %}
+    {% if request.user == user %}
+        Enhance your own experience by <a href="{% url 'update_profile' %}">updating your profile</a>!
+    {% else %}
+        Check out other users' contributions, achievements, and more. Connect with them and their content. 
+        Meanwhile, enhance your experience by <a href="{% url 'update_profile' %}">updating your profile</a>!
+    {% endif %}
+{% endblock hero_subtitle %}
+
+{% block hero_buttons %}
+    <!-- Buttons: Follow/Unfollow Button and Following/Followers Lists Buttons -->
+    <div class="container">
+        <div class="d-flex justify-content-start align-items-center mb-3">
+            <!-- Follow/Unfollow Button for Other Users -->
+            {% if request.user != user %}
+                {% if is_following_user %}
+                    {% with action='unfollow' %}
+                        <form method="post" action="{% url 'follow_view' username=user.username action=action %}" 
+                            class="d-inline">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger me-2">Unfollow</button>
+                        </form>
+                    {% endwith %}
+                {% else %}
+                    {% with action='follow' %}
+                        <form method="post" action="{% url 'follow_view' username=user.username action=action %}" 
+                            class="d-inline">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-primary me-2">Follow</button>
+                        </form>
+                    {% endwith %}
+                {% endif %}
+            {% endif %}
+
+            <!-- Buttons to View Followers and Following Lists -->
+            <a href="{% url 'follow_list' username=user.username follow_type='followers' %}" 
+                class="btn btn-primary me-2 d-inline">
+                Followers ({{ followers.count }})
+            </a>
+            <a href="{% url 'follow_list' username=user.username follow_type='following' %}" 
+                class="btn btn-primary me-2 d-inline">
+                Following ({{ following_users.count }})
+            </a>
+        </div>
+    </div>
+{% endblock hero_buttons %}
+
+{% block content %}
+    <!-- Profile Details -->
+    <div class="row mb-3">
+        <div class="col-md-12 mx-auto">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <!-- Profile Photo Section -->
+                        <div class="col-md-3 mb-3">
+                            {% if profile.image %}
+                                <img class="img-fluid rounded-circle" src="{{ profile.image.url }}" 
+                                    alt="Profile Photo">
+                            {% else %}
+                                <img class="img-fluid rounded-circle" src="{% static 'img/default_profile_pic.jpg' %}" 
+                                    alt="Default Profile Photo">
+                            {% endif %}
+                        </div>
+
+                        <!-- User's Personal Details -->
+                        <div class="col-md-9">
+                            <!-- Basic Info: Username, Name, Surname, Birth Date/Place, Location -->
+                            <div class="row g-5">
+                                <!-- Left Column: Basic Info -->
+                                <div class="col-md-6">
+                                    <div class="row mb-3 border border-secondary rounded-3 p-3">
+                                        <div class="col-md-3"><strong>Username</strong></div>
+                                        <div class="col-md-9">{{ user.username }}</div>
+                                    </div>
+                                    <div class="row mb-3 border border-secondary rounded-3 p-3">
+                                        <div class="col-md-3"><strong>First Name</strong></div>
+                                        <div class="col-md-9">{{ user.first_name|default:"-" }}</div>
+                                    </div>
+                                    <div class="row mb-3 border border-secondary rounded-3 p-3">
+                                        <div class="col-md-3"><strong>Last Name</strong></div>
+                                        <div class="col-md-9">{{ user.last_name|default:"-" }}</div>
+                                    </div>
+                                </div>
+
+                                <!-- Right Column: Birth Details -->
+                                <div class="col-md-6">
+                                    <div class="row mb-3 border border-secondary rounded-3 p-3">
+                                        <div class="col-md-3"><strong>Birth Date</strong></div>
+                                        <div class="col-md-9">{{ profile.birth_date|date:"d M Y"|default:"-" }}
+                                        </div>
+                                    </div>
+                                    <div class="row mb-3 border border-secondary rounded-3 p-3">
+                                        <div class="col-md-3"><strong>Birth Place</strong></div>
+                                        <div class="col-md-9">{{ profile.birth_place|default:"-" }}</div>
+                                    </div>
+                                    <div class="row mb-3 border border-secondary rounded-3 p-3">
+                                        <div class="col-md-3"><strong>Location</strong></div>
+                                        <div class="col-md-9">{{ profile.current_location|default:"-" }}</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Extended Info: Education, Profession, About -->
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="row mb-3 border border-secondary rounded-3 p-3">
+                                        <div class="col-md-2"><strong>Education</strong></div>
+                                        <div class="col-md-10">{{ profile.education|default:"-" }}</div>
+                                    </div>
+                                    <div class="row mb-3 border border-secondary rounded-3 p-3">
+                                        <div class="col-md-2"><strong>Profession</strong></div>
+                                        <div class="col-md-10">{{ profile.profession|default:"-" }}</div>
+                                    </div>
+                                    <div class="row mb-3 border border-secondary rounded-3 p-3">
+                                        <div class="col-md-2"><strong>About</strong></div>
+                                        <div class="col-md-10">
+                                            {% if profile.about %}
+                                                {% if profile.about == '<p>&nbsp;</p>' %}
+                                                    -
+                                                {% else %}
+                                                    {{ profile.about|safe }}
+                                                {% endif %}
+                                            {% else %}
+                                                -
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- If the user is viewing another user's profile, list that user's content -->
+    {% if request.user != user %}
+        <!-- Hero Section for Content List Section -->
+        <div class="bg-light p-5 rounded-lg m-3">
+            <!-- Display the username of the profile being viewed -->
+            <h1 class="display-3">{{ user.username }}'s Contents</h1>
+            <p class="lead">
+                Here, you can view all the content created by {{ user.username }}. 
+                Add your own content to enrich this space! 
+                Don't miss the chance to contribute and make our community even better by sharing your valuable content!
+            </p>
+            
+            <!-- Content Filter and Add Content Section -->
+            <div class="container">
+                <div class="d-flex justify-content-start align-items-center mb-3">
+                    <!-- Form to filter content by type -->
+                    <form action="{% url 'profile_view' user.username %}" method="get" class="d-inline-block me-2">
+                        <div class="dropdown">
+                            <!-- Dropdown to select content type -->
+                            {% with content_type as current_type %}
+                                <button class="btn btn-primary dropdown-toggle" type="button" 
+                                    data-bs-toggle="dropdown" aria-expanded="false">
+                                    {% if current_type %}
+                                        {% if current_type == "academic_article" %}Academic Article
+                                        {% elif current_type == "insightful_essay" %}Insightful Essay
+                                        {% elif current_type == "sufi_experience" %}Sufi Experience
+                                        {% elif current_type == "question_answer" %}Question-Answer
+                                        {% elif current_type == "book_review" %}Book/Article Review
+                                        {% else %}Select content type
+                                        {% endif %}
+                                    {% else %}
+                                        Select content type
+                                    {% endif %}
+                                </button>
+                            {% endwith %}
+
+                            <!-- Dropdown menu for content types -->
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <button type="submit" class="dropdown-item" 
+                                        name="content_type" value="">
+                                        All Types
+                                    </button>
+                                </li>
+                                <li>
+                                    <button type="submit" class="dropdown-item" 
+                                        name="content_type" value="academic_article">
+                                        Academic Article
+                                    </button>
+                                </li>
+                                <li>
+                                    <button type="submit" class="dropdown-item" 
+                                        name="content_type" value="insightful_essay">
+                                        Insightful Essay
+                                    </button>
+                                </li>
+                                <li>
+                                    <button type="submit" class="dropdown-item" 
+                                        name="content_type" value="sufi_experience">
+                                        Sufi Experience
+                                    </button>
+                                </li>
+                                <li>
+                                    <button type="submit" class="dropdown-item" 
+                                        name="content_type" value="question_answer">
+                                        Question-Answer
+                                    </button>
+                                </li>
+                                <li>
+                                    <button type="submit" class="dropdown-item" 
+                                        name="content_type" value="book_review">
+                                        Book/Article Review
+                                    </button>
+                                </li>
+                            </ul>
+                        </div>
+                    </form>
+
+                    <!-- Button to add new content -->
+                    <a href="{% url 'add_content' %}" class="btn btn-primary me-2">Add Content</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Content Display Section -->
+        <div class="row">
+            <div class="col-md-12">
+                <!-- Check if there is any content to display -->
+                {% if page_obj.object_list %}
+                    {% for content in page_obj.object_list %}
+                        <div class="card mb-3">
+                            <div class="row">
+                                <!-- Content Image Section -->
+                                <div class="col-md-3">
+                                    <a href="{% url 'content_detail' content.id %}">
+                                        {% if content.content_image %}
+                                            <img src="{{ content.content_image.url }}" 
+                                            class="card-img" alt="Content Image" 
+                                            title="Click to view details of this content">
+                                        {% else %}
+                                            <img src="{% static content.get_image_url %}" 
+                                            class="card-img" alt="Default Content Image"
+                                            title="Click to view details of this content">
+                                        {% endif %}
+                                    </a>
+                                </div>
+                                
+                                <!-- Content Details Section -->
+                                <div class="col-md-9">
+                                    <div class="card-body">
+                                        <!-- Content Title -->
+                                        <h2 class="card-title">{{ content.title }}</h2>
+
+                                        <!-- Content Introduction -->
+                                        <p class="card-text">{{ content.introduction }}</p>
+
+                                        <!-- Content Author and Profile Image -->
+                                        <p class="card-text">
+                                            {% if content.author.profile.image %}
+                                                <img src="{{ content.author.profile.image.url }}" 
+                                                    alt="Profile Image" class="img-thumbnail rounded-circle" 
+                                                    style="width: 30px; height: 30px;">
+                                            {% else %}
+                                                <img src="{% static 'img/default_profile_pic.jpg' %}" 
+                                                    alt="Default Profile Image" class="img-thumbnail rounded-circle" 
+                                                    style="width: 30px; height: 30px;">
+                                            {% endif %}
+                                            <small class="text-muted">
+                                                by 
+                                                {% if content.author %}
+                                                    {{ content.author.username }}
+                                                {% else %}
+                                                    Deleted User
+                                                {% endif %}
+                                            </small>
+                                        </p>
+
+                                        <!-- Content Topic, Type, and Language -->
+                                        <p class="card-text">
+                                            <small class="text-muted">
+                                                {{ content.get_topic_display }} - 
+                                                {{ content.get_content_type_display }} - 
+                                                {{ content.get_language_display }}
+                                            </small>
+                                        </p>
+
+                                        <!-- Content Creation Date -->
+                                        <p class="card-text">
+                                            <small class="text-muted">{{ content.created_date }}</small>
+                                        </p>
+
+                                        <!-- Content Views and Likes -->
+                                        <p class="card-text">
+                                            <small class="text-muted">
+                                                {{ content.views_count }} Views, {{ content.like_count }} Likes
+                                            </small>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+
+                    <!-- Panigation Section -->
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination justify-content-center">
+                            {% if page_obj.has_previous %}
+                                <li class="page-item">
+                                    <a class="page-link" 
+                                        href="?{% if content_type %}content_type={{ content_type }}&{% endif %}page=1" 
+                                        aria-label="First">
+                                        <span aria-hidden="true">&laquo;&laquo;</span>
+                                    </a>
+                                </li>
+                                <li class="page-item">
+                                    <!-- Long 'href': Exceeds 120 chars, kept intact for compatibility -->
+                                    <a class="page-link" 
+                                        href="?{% if content_type %}content_type={{ content_type }}&{% endif %}page={{ page_obj.previous_page_number }}" 
+                                        aria-label="Previous">
+                                        <span aria-hidden="true">&laquo;</span>
+                                    </a>
+                                </li>
+                            {% endif %}
+
+                            {% for num in page_obj.paginator.page_range %}
+                                {% if page_obj.number == num %}
+                                    <li class="page-item active">
+                                        <span class="page-link">{{ num }}</span>
+                                    </li>
+                                {% else %}
+                                    <li class="page-item">
+                                        <!-- Long 'href': Exceeds 120 chars, kept intact for compatibility -->
+                                        <a class="page-link" 
+                                            href="?{% if content_type %}content_type={{ content_type }}&{% endif %}page={{ num }}">
+                                            {{ num }}
+                                        </a>
+                                    </li>
+                                {% endif %}
+                            {% endfor %}
+
+                            {% if page_obj.has_next %}
+                                <li class="page-item">
+                                    <!-- Long 'href': Exceeds 120 chars, kept intact for compatibility -->
+                                    <a class="page-link" 
+                                        href="?{% if content_type %}content_type={{ content_type }}&{% endif %}page={{ page_obj.next_page_number }}" 
+                                        aria-label="Next">
+                                        <span aria-hidden="true">&raquo;</span>
+                                    </a>
+                                </li>
+                                <li class="page-item">
+                                    <!-- Long 'href': Exceeds 120 chars, kept intact for compatibility -->
+                                    <a class="page-link" 
+                                        href="?{% if content_type %}content_type={{ content_type }}&{% endif %}page={{ page_obj.paginator.num_pages }}" 
+                                        aria-label="Last">
+                                        <span aria-hidden="true">&raquo;&raquo;</span>
+                                    </a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+
+                <!-- No content message -->
+                {% else %}
+                    <div class="alert alert-warning" role="alert">
+                        <p>There are no content for {{ user.username }} yet.</p>     
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}

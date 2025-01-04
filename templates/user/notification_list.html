@@ -1,0 +1,125 @@
+{% extends "layout.html" %}
+{% load static %}
+
+{% block title %}Notifications{% endblock title %}
+
+{% block robots %}noindex, nofollow{% endblock robots %}
+
+{% block hero_title %}Your Notifications{% endblock hero_title %}
+
+{% block hero_subtitle %}
+    Every notification is a new opportunity to engage, learn, and grow. 
+    Keep track of what matters and let your interactions drive your journey forward.
+{% endblock hero_subtitle %}
+
+{% block content %}
+    <!-- Table Section: Displays a list of notifications if any exist -->
+    {% if page_obj %}
+        <div class="table-responsive bg-light p-3 rounded-lg m-3">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th scope="col">Profile Image</th>
+                        <th scope="col">Notification</th>
+                        <th scope="col" style="width: 20%;">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Looping through notifications on the current page -->
+                    {% for notification in page_obj %}
+                        <tr class="{% if not notification.is_read %}table-active{% endif %}">
+                            <!-- Profile Image -->
+                            <td>
+                                {% if notification.from_user and notification.from_user.profile.image %}
+                                    <img src="{{ notification.from_user.profile.image.url }}" alt="Profile Image" 
+                                        class="img-thumbnail rounded-circle" style="width: 30px; height: 30px;">
+                                {% else %}
+                                    <img src="{% static 'img/default_profile_pic.jpg' %}" alt="Default Profile Image" 
+                                        class="img-thumbnail rounded-circle" style="width: 30px; height: 30px;">
+                                {% endif %}
+                            </td>
+
+                            <!-- Notification Info -->
+                            <td>
+                                {% if notification.notification_type == 'comment' %}
+                                    {% if notification.from_user %}
+                                        {{ notification.from_user.username }} made a new comment 
+                                        on your content titled "{{ notification.comment.content.title }}".
+                                    {% else %}
+                                        Deleted User made a new comment 
+                                        on your content titled "{{ notification.comment.content.title }}".
+                                    {% endif %}
+                                {% elif notification.notification_type == 'like' %}
+                                    {% if notification.like.content %}
+                                        {% if notification.from_user %}
+                                            {{ notification.from_user.username }} liked your content 
+                                            titled "{{ notification.like.content.title }}".
+                                        {% else %}
+                                            Deleted User liked your content 
+                                            titled "{{ notification.like.content.title }}".
+                                        {% endif %}
+                                    {% elif notification.like.comment %}
+                                        {% if notification.from_user %}
+                                            {{ notification.from_user.username }} liked your comment 
+                                            on the content titled "{{ notification.like.comment.content.title }}".
+                                        {% else %}
+                                            Deleted User liked your comment 
+                                            on the content titled "{{ notification.like.comment.content.title }}".
+                                        {% endif %}
+                                    {% endif %}
+                                {% elif notification.notification_type == 'follow' %}
+                                    {% if notification.from_user %}
+                                        {{ notification.from_user.username }} started following you.
+                                    {% else %}
+                                        Deleted User started following you.
+                                    {% endif %}
+                                {% endif %}
+                            </td>
+
+                            <!-- Action to view the notification -->
+                            <td>
+                                <a href="{% url 'notification_redirect' notification.id %}" 
+                                    class="btn btn-primary btn-sm d-inline">
+                                    View
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination: Enables navigation between pages of notifications -->
+        <nav aria-label="Page navigation">
+            <ul class="pagination justify-content-center">
+                {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                {% endif %}
+
+                {% for num in page_obj.paginator.page_range %}
+                    <li class="page-item {% if page_obj.number == num %}active{% endif %}">
+                        <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                    </li>
+                {% endfor %}
+
+                {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.next_page_number }}" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+
+    <!-- Alert for No Notifications -->
+    {% else %}
+        <div class="alert alert-warning" role="alert">
+            <p>There are no notifications yet.</p>        
+        </div>
+    {% endif %}
+{% endblock %}

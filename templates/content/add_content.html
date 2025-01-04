@@ -1,0 +1,36 @@
+{% extends "layout.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %}Add Content{% endblock title %}
+
+{% block robots %}noindex, nofollow{% endblock robots %}
+
+<!-- Additional head content for CKEditor -->
+{% block extra_head %}{{ form.media }}{% endblock extra_head %}
+
+{% block hero_title %}Welcome {{ user.username }}!{% endblock hero_title %}
+
+{% block hero_subtitle %}
+    We are eager to read your contributions on various topics related to Sufism. 
+    Your articles, essays, experiences, reviews and questions will enrich our community.
+{% endblock hero_subtitle %}
+
+{% block content %}
+    <!-- Content Form Section -->
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h4>Add Content</h4>
+                </div>
+                <div class="card-body">
+                    <form action="{% url 'add_content' %}" method="POST" enctype="multipart/form-data" novalidate>
+                        {% csrf_token %}
+                        {{ form|crispy }}
+                        <button type="submit" class="btn btn-primary btn-block">Add Your Content</button>
+                    </form>        
+                </div>
+            </div>        
+        </div>
+    </div>
+{% endblock content %}

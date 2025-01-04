@@ -1,0 +1,40 @@
+{% extends "layout.html" %}
+{% load static %}
+
+{% block title %}Delete Account{% endblock %}
+
+{% block robots %}noindex, nofollow{% endblock robots %}
+
+{% block hero_title %}Delete Account{% endblock hero_title %}
+
+{% block hero_subtitle %}
+    Are you sure you want to delete your account? This action cannot be undone.
+{% endblock hero_subtitle %}
+
+{% block hero_extra %}
+    <!-- Warning message for users about the consequences of deleting their account -->
+    <div class="alert alert-warning" style="font-size: 0.9rem;">
+        <p>
+            If you delete your membership, your existing contents will be labeled as 'Deleted User' 
+            and will replace your name. If you do not want these contents to remain on the site, 
+            please delete all your contents or the ones you do not want to keep before deleting your membership.
+        </p>        
+    </div>
+{% endblock hero_extra %}
+
+{% block hero_buttons %}
+    <!-- Confirmation and cancellation actions -->
+    <div class="container">
+        <div class="d-flex justify-content-start align-items-center mb-3">
+            <form action="{% url 'delete_account' %}" method="POST">
+                {% csrf_token %}
+                <!-- Delete button: triggers a JavaScript confirmation prompt to ensure user intention -->
+                <button type="submit" class="btn btn-danger" 
+                    onclick="return confirm('Are you sure you want to delete your account?');">
+                    Yes, delete my account
+                </button>
+                <a href="{% url 'dashboard' %}" class="btn btn-secondary">Cancel</a>
+            </form>
+        </div>
+    </div>
+{% endblock hero_buttons %}

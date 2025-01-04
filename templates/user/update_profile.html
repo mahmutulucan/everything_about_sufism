@@ -1,0 +1,47 @@
+{% extends "layout.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %}Update Profile{% endblock %}
+
+{% block extra_head %}{{ profile_form.media }}{% endblock extra_head %}
+
+{% block hero_title %}
+    Welcome {{ user.username }}!
+{% endblock hero_title %}
+
+{% block hero_subtitle %}
+    Here, you can update both your user and profile information. 
+    Please ensure that all details are accurate and up-to-date.
+{% endblock hero_subtitle %}
+
+{% block content %}
+    <!-- User and Profile Update Forms Section with the Delete Account Link -->
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h4>Update Profile</h4>
+                </div>
+                <div class="card-body">
+                    <form action="{% url 'update_profile' %}" method="POST" enctype="multipart/form-data" novalidate>
+                        {% csrf_token %}
+                        <div class="mb-5">
+                            <h5 class="mb-3">User Information</h5>
+                            {{ user_form|crispy }}
+                        </div>
+                        <div class="mb-3">
+                            <h5 class="mb-3">Profile Information</h5>
+                            {{ profile_form|crispy }}
+                        </div>
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                    </form>
+                    <hr>
+                    <p class="small text-danger">
+                        <a href="{% url 'delete_account' %}">Delete Account</a> - 
+                        Are you sure you want to delete your account? This action cannot be undone.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

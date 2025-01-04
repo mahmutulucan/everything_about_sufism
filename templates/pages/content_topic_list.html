@@ -1,0 +1,325 @@
+{% extends "layout.html" %}
+{% load static %}
+
+<!-- Dynamically sets the page title based on the selected topic -->
+{% block title %}
+    {% if topic == 'history' %}History
+    {% elif topic == 'literature' %}Literature
+    {% elif topic == 'concepts' %}Concepts
+    {% elif topic == 'sufis' %}Sufis
+    {% elif topic == 'sects' %}Sects
+    {% elif topic == 'popular_topics' %}Popular Topics
+    {% else %}All Contents
+    {% endif %}
+{% endblock title %}
+
+<!-- Main heading based on selected topic -->
+{% block hero_title %}
+    {% if topic == 'history' %}History
+    {% elif topic == 'literature' %}Literature
+    {% elif topic == 'concepts' %}Concepts
+    {% elif topic == 'sufis' %}Sufis
+    {% elif topic == 'sects' %}Sects
+    {% elif topic == 'popular_topics' %}Popular Topics
+    {% else %}All Contents
+    {% endif %}
+{% endblock hero_title %}
+
+<!-- Brief description for each topic -->
+{% block hero_subtitle %}
+    {% if topic == 'history' %}
+        The challenge of categorizing the history of Sufism into periods, 
+        the evolution of Sufi thought throughout history, and related issues...
+    {% elif topic == 'literature' %}
+        All books written about Sufism throughout history...
+    {% elif topic == 'concepts' %}
+        All concepts pertaining to Sufi philosophy...
+    {% elif topic == 'sufis' %}
+        Ascetics and Sufis who have shaped Sufi thought and life from the early period to the present day...
+    {% elif topic == 'sects' %}
+        All Sufi sects, their emergence, development, principles, rituals, and related topics...
+    {% elif topic == 'popular_topics' %}
+        All individuals, contemporary questions, and issues evoked by the mention of Sufism...
+    {% else %}
+        A comprehensive collection of contents across all categories... 
+        Delve into various aspects and deepen your understanding.
+    {% endif %}
+{% endblock hero_subtitle %}
+
+{% block hero_buttons %}
+    <!-- Filtering options container -->
+    <div class="container">
+        <div class="d-flex justify-content-start align-items-center mb-3">
+            <!-- Form for filtering content types and filtering by followers' content (if authenticated) -->
+            <form action="" method="get" class="d-inline-block me-2">
+                <div class="dropdown d-inline-block me-2">
+                    <!-- Button to display and select content types -->
+                    {% with content_type as current_type %}
+                        <button 
+                            class="btn btn-primary dropdown-toggle" 
+                            type="button" 
+                            data-bs-toggle="dropdown" 
+                            aria-expanded="false">
+                            <!-- Display the selected content type or default message -->
+                            {% if current_type %}
+                                {% if current_type == "academic_article" %}Academic Article
+                                {% elif current_type == "insightful_essay" %}Insightful Essay
+                                {% elif current_type == "sufi_experience" %}Sufi Experience
+                                {% elif current_type == "question_answer" %}Question-Answer
+                                {% elif current_type == "book_review" %}Book/Article Review
+                                {% else %}Select content type
+                                {% endif %}
+                            {% else %}
+                                Select content type
+                            {% endif %}
+                        </button>
+                    {% endwith %}
+
+                    <!-- List of all content type options -->
+                    <ul class="dropdown-menu">
+                        <li>
+                            <button type="submit" class="dropdown-item" 
+                                name="content_type" value="">
+                                All Types
+                            </button>
+                        </li>
+                        <li>
+                            <button type="submit" class="dropdown-item" 
+                                name="content_type" value="academic_article">
+                                Academic Article
+                            </button>
+                        </li>
+                        <li>
+                            <button type="submit" class="dropdown-item" 
+                                name="content_type" value="insightful_essay">
+                                Insightful Essay
+                            </button>
+                        </li>
+                        <li>
+                            <button type="submit" class="dropdown-item" 
+                                name="content_type" value="sufi_experience">
+                                Sufi Experience
+                            </button>
+                        </li>
+                        <li>
+                            <button type="submit" class="dropdown-item" 
+                                name="content_type" value="question_answer">
+                                Question-Answer
+                            </button>
+                        </li>
+                        <li>
+                            <button type="submit" class="dropdown-item" 
+                                name="content_type" value="book_review">
+                                Book/Article Review
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+
+                {% if user.is_authenticated %}
+                    <!-- Dropdown for filtering content by following -->
+                    <div class="dropdown d-inline-block me-2">
+                        <!-- Show the current filter option: Following's Content or All Content -->
+                        <button class="btn btn-primary dropdown-toggle" type="button" 
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            {% if show_following_content %}
+                                Following's Content
+                            {% else %}
+                                Show Following's Content
+                            {% endif %}
+                        </button>
+
+                        <!-- Options for showing content based on following -->
+                        <ul class="dropdown-menu">
+                            <li>
+                                <!-- Long 'href': Exceeds 120 chars, kept intact for compatibility -->
+                                <a class="dropdown-item" 
+                                    href="?{% if content_type %}content_type={{ content_type }}&{% endif %}show_following_content=true">
+                                    Show Following's Content
+                                </a>
+                            </li>
+                            <li>
+                                <!-- Long 'href': Exceeds 120 chars, kept intact for compatibility -->
+                                <a class="dropdown-item" 
+                                    href="?{% if content_type %}content_type={{ content_type }}&{% endif %}show_following_content=false">
+                                    Show All Content
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                {% endif %}
+            </form>
+
+            <!-- Show "Add Content" if logged in, or "Log in" if not -->
+            {% if user.is_authenticated %}
+                <a href="{% url 'add_content' %}" class="btn btn-primary">Add Content</a>
+            {% else %}
+                <a href="{% url 'login' %}" class="btn btn-primary">Log in to add content</a>
+            {% endif %}
+        </div>
+    </div>
+{% endblock hero_buttons %}
+
+{% block content %}
+    <!-- Content Section -->
+    <div class="row">
+        <div class="col-md-12">
+            {% if page_obj %}
+                <!-- Display a paginated list of content cards -->
+                {% for content in page_obj %}
+                    <div class="card mb-3">
+                        <div class="row">
+                            <!-- Image Section -->
+                            <div class="col-md-3">
+                                <a href="{% url 'content_detail' content.id %}">
+                                    {% if content.content_image %}
+                                        <img src="{{ content.content_image.url }}" class="card-img" 
+                                            alt="Content Image"
+                                            title="Click to view details of this content">
+                                    {% else %}
+                                        <img src="{% static content.get_image_url %}" class="card-img" 
+                                            alt="Default Content Image"
+                                            title="Click to view details of this content">
+                                    {% endif %}
+                                </a>
+                            </div>
+
+                            <!-- Content Details Section -->
+                            <div class="col-md-9">
+                                <div class="card-body">
+                                    <!-- Content title and introduction -->
+                                    <h2 class="card-title">{{ content.title }}</h2>
+                                    <p class="card-text">{{ content.introduction }}</p>
+                                    
+                                    <!-- Author Profile and Info -->
+                                    <p class="card-text">
+                                        {% if content.author.profile.image %}
+                                            <img 
+                                                src="{{ content.author.profile.image.url }}" 
+                                                alt="Profile image of {{ content.author.username }}" 
+                                                class="img-thumbnail rounded-circle" 
+                                                style="width: 30px; height: 30px;">
+                                        {% else %}
+                                            <img 
+                                                src="{% static 'img/default_profile_pic.jpg' %}" 
+                                                alt="Default Profile Image" 
+                                                class="img-thumbnail rounded-circle" 
+                                                style="width: 30px; height: 30px;">
+                                        {% endif %}
+                                        <small class="text-muted">by 
+                                            {% if user.is_authenticated and content.author %}
+                                                <a href="{% url 'profile_view' content.author.username %}" 
+                                                    title="Click to view profile of {{ content.author.username }}">
+                                                    {{ content.author.username }}
+                                                </a>
+                                            {% else %}
+                                                {% if content.author %}
+                                                    {{ content.author.username }}
+                                                {% else %}
+                                                    Deleted User
+                                                {% endif %}
+                                            {% endif %}
+                                        </small>
+                                    </p>
+
+                                    <!-- Additional Metadata -->
+                                    <p class="card-text">
+                                        <small class="text-muted">
+                                            {{ content.get_topic_display }} - 
+                                            {{ content.get_content_type_display }} - 
+                                            {{ content.get_language_display }}
+                                        </small>
+                                    </p>
+                                    <p class="card-text">
+                                        <small class="text-muted">{{ content.created_date }}</small>
+                                    </p>
+                                    <p class="card-text">
+                                        <small class="text-muted">
+                                            {{ content.views_count }} Views, 
+                                            {{ content.like_count }} Likes
+                                        </small>
+                                    </p>
+
+                                    <!-- Edit/Delete options for the content author -->
+                                    {% if content.author == user %}
+                                        <a href="{% url 'edit_content' content.id %}" class="btn btn-primary">
+                                            Edit
+                                        </a>
+                                        <a href="{% url 'delete_content' content.id %}" class="btn btn-danger">
+                                            Delete
+                                        </a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+
+                <!-- Pagination controls -->
+                <div class="d-flex justify-content-center">
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination">
+                            {% if page_obj.has_previous %}
+                                <li class="page-item">
+                                    <a class="page-link" 
+                                        href="?page=1{% if content_type %}&content_type={{ content_type }}{% endif %}{% if show_following_content %}&show_following_content=true{% endif %}" 
+                                        aria-label="First">
+                                        <span aria-hidden="true">&laquo;&laquo;</span>
+                                    </a>
+                                </li>
+                                <li class="page-item">
+                                    <!-- Long 'href': Exceeds 120 chars, kept intact for compatibility -->
+                                    <a class="page-link" 
+                                        href="?page={{ page_obj.previous_page_number }}{% if content_type %}&content_type={{ content_type }}{% endif %}{% if show_following_content %}&show_following_content=true{% endif %}" 
+                                        aria-label="Previous">
+                                        <span aria-hidden="true">&laquo;</span>
+                                    </a>
+                                </li>
+                            {% endif %}
+
+                            {% for num in page_obj.paginator.page_range %}
+                                {% if page_obj.number == num %}
+                                    <li class="page-item active" aria-current="page">
+                                        <span class="page-link">{{ num }}</span>
+                                    </li>
+                                {% else %}
+                                    <li class="page-item">
+                                        <!-- Long 'href': Exceeds 120 chars, kept intact for compatibility -->
+                                        <a class="page-link" 
+                                            href="?page={{ num }}{% if content_type %}&content_type={{ content_type }}{% endif %}{% if show_following_content %}&show_following_content=true{% endif %}">
+                                            {{ num }}
+                                        </a>
+                                    </li>
+                                {% endif %}
+                            {% endfor %}
+
+                            {% if page_obj.has_next %}
+                                <li class="page-item">
+                                    <!-- Long 'href': Exceeds 120 chars, kept intact for compatibility -->
+                                    <a class="page-link" 
+                                        href="?page={{ page_obj.next_page_number }}{% if content_type %}&content_type={{ content_type }}{% endif %}{% if show_following_content %}&show_following_content=true{% endif %}" 
+                                        aria-label="Next">
+                                        <span aria-hidden="true">&raquo;</span>
+                                    </a>
+                                </li>
+                                <li class="page-item">
+                                    <!-- Long 'href': Exceeds 120 chars, kept intact for compatibility -->
+                                    <a class="page-link" 
+                                        href="?page={{ page_obj.paginator.num_pages }}{% if content_type %}&content_type={{ content_type }}{% endif %}{% if show_following_content %}&show_following_content=true{% endif %}" 
+                                        aria-label="Last">
+                                        <span aria-hidden="true">&raquo;&raquo;</span>
+                                    </a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                </div>
+            {% else %}
+                <!-- Display message when no content is available -->
+                <div class="alert alert-warning" role="alert">
+                    <p>There are no content yet.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+{% endblock content %}

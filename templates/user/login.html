@@ -1,0 +1,45 @@
+{% extends "layout.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %}Login{% endblock %}
+
+{% block description %}
+    Log in to join our community and contribute to discussions, articles, and insights on Sufism and spirituality.
+{% endblock description %}
+
+{% block keywords %}
+    login, tasawwuf, sufism, spirituality, islamic mysticism, forum, discussions, articles
+{% endblock keywords %}
+
+{% block hero_title %}Welcome Back!{% endblock hero_title %}
+
+{% block hero_subtitle %}
+    Log in to your account to add and edit your contents, and engage with our community.
+{% endblock hero_subtitle %}
+
+{% block content %}
+    <!-- Login form section with links to the registration and password reset pages -->
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h4>Login</h4>
+                </div>
+                <div class="card-body">
+                    <form action="{% url 'login' %}" method="POST" novalidate>
+                        {% csrf_token %}
+                        {{ form|crispy }}
+                        <button type="submit" class="btn btn-primary btn-block">Login</button>
+                        <hr>
+                        <p>
+                            <a href="{% url 'register' %}">Click here</a> to become a member.
+                        </p>
+                        <p>
+                            <a href="{% url 'password_reset' %}">Forgot your password?</a>
+                        </p>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
