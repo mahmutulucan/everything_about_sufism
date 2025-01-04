@@ -74,7 +74,7 @@ def content_topic_list(request, topic):
         ).order_by('-created_date')
 
     # Set up pagination for the filtered content, 10 items per page.
-    paginator = Paginator(contents_topic_list, 3)
+    paginator = Paginator(contents_topic_list, 10)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
