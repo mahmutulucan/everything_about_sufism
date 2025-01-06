@@ -116,23 +116,18 @@ WSGI_APPLICATION = 'everything_about_sufism.wsgi.application'
 # Database settings
 DATABASES = {
     'default': {
-        # Use PostgreSQL by default, or SQLite/MySQL as needed
-        'ENGINE': os.getenv('DATABASE_ENGINE', 'django.db.backends.postgresql'),
-        
-        # Database name: Path for SQLite, name for PostgreSQL/MySQL
-        'NAME': os.getenv('DATABASE_NAME', 'everything_about_sufism_db'),
-        
+        # Database engine: SQLite, PostgreSQL, or MySQL
+        'ENGINE': os.getenv('DATABASE_ENGINE', 'django.db.backends.sqlite3'),
+        # Database name: file name for SQLite or database name for others
+        'NAME': os.getenv('DATABASE_NAME', BASE_DIR / 'db.sqlite3'),
         # Database user: required for PostgreSQL/MySQL
         'USER': os.getenv('DATABASE_USER', ''),
-        
         # Database password: required for PostgreSQL/MySQL
         'PASSWORD': os.getenv('DATABASE_PASSWORD', ''),
-        
         # Database host: IP address or domain for PostgreSQL/MySQL
         'HOST': os.getenv('DATABASE_HOST', ''),
-        
         # Database port: e.g., 5432 for PostgreSQL or 3306 for MySQL
-        'PORT': os.getenv('DATABASE_PORT', '5432'),  # Default PostgreSQL port
+        'PORT': os.getenv('DATABASE_PORT', ''),
     }
 }
 
