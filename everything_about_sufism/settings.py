@@ -325,3 +325,14 @@ LOGIN_URL = '/user/login/'
 
 # URL to redirect users to after a successful login
 LOGIN_REDIRECT_URL = '/'
+
+# Security settings for production: control cookie and security-related flags
+CSRF_COOKIE_SECURE = os.getenv('CSRF_COOKIE_SECURE', 'False') == 'True'
+SECURE_BROWSER_XSS_FILTER = (
+    os.getenv('SECURE_BROWSER_XSS_FILTER', 'False') == 'True'
+)
+SECURE_CONTENT_TYPE_NOSNIFF = (
+    os.getenv('SECURE_CONTENT_TYPE_NOSNIFF', 'False') == 'True'
+)
+SECURE_SSL_REDIRECT = os.getenv('SECURE_SSL_REDIRECT', 'False') == 'True'
+SESSION_COOKIE_SECURE = os.getenv('SESSION_COOKIE_SECURE', 'False') == 'True'
