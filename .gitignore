@@ -9,9 +9,6 @@ env/
 virtualenv/
 python_env/
 
-# Django database
-db.sqlite3
-
 # Media files (uploaded by users)
 media/
 
@@ -57,3 +54,6 @@ docker-compose.override.yml
 # Other temporary or system files
 .DS_Store
 Thumbs.db
+
+# SQLite database file (added to ignore db.sqlite3)
+db.sqlite3

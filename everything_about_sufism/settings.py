@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/.
 """
 
+import dj_database_url
 import os
 from pathlib import Path
 
@@ -85,6 +86,10 @@ MIDDLEWARE = [
     'user.middleware.VerificationRequiredMiddleware',
 ]
 
+# Add WhiteNoise middleware only in production (when DEBUG is False)
+if not DEBUG:
+    MIDDLEWARE.insert(0, 'whitenoise.middleware.WhiteNoiseMiddleware')
+
 # Project URL configuration
 ROOT_URLCONF = 'everything_about_sufism.urls'
 
@@ -113,23 +118,24 @@ WSGI_APPLICATION = 'everything_about_sufism.wsgi.application'
 # Database Configuration
 # -----------------------------------------------------------------------------
 
-# Database settings
-DATABASES = {
-    'default': {
-        # Database engine: SQLite, PostgreSQL, or MySQL
-        'ENGINE': os.getenv('DATABASE_ENGINE', 'django.db.backends.sqlite3'),
-        # Database name: file name for SQLite or database name for others
-        'NAME': os.getenv('DATABASE_NAME', BASE_DIR / 'db.sqlite3'),
-        # Database user: required for PostgreSQL/MySQL
-        'USER': os.getenv('DATABASE_USER', ''),
-        # Database password: required for PostgreSQL/MySQL
-        'PASSWORD': os.getenv('DATABASE_PASSWORD', ''),
-        # Database host: IP address or domain for PostgreSQL/MySQL
-        'HOST': os.getenv('DATABASE_HOST', ''),
-        # Database port: e.g., 5432 for PostgreSQL or 3306 for MySQL
-        'PORT': os.getenv('DATABASE_PORT', ''),
+# Check if DATABASE_URL is defined first, then configure accordingly
+database_url = os.getenv("DATABASE_URL")
+
+# If DATABASE_URL is set, use PostgreSQL
+if database_url:
+    DATABASES = {
+        'default': dj_database_url.parse(database_url, conn_max_age=600)
     }
-}
+
+# If DATABASE_URL is not set, use SQLite
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        }
+    }
+
 
 # -----------------------------------------------------------------------------
 # Password Validation for ensuring strong passwords in user authentication
@@ -173,11 +179,20 @@ USE_TZ = True  # Enable timezone support.
 # -----------------------------------------------------------------------------
 # Static Files (CSS, JavaScript, Images)
 # -----------------------------------------------------------------------------
-STATIC_URL = '/static/'  # URL for static files
+
+# URL for static files
+STATIC_URL = '/static/'
+
 # Directory where collected static files are stored
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+# If not in DEBUG mode (production), use WhiteNoise for optimized static file handling
+if not DEBUG:
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+# Additional locations for static files
 STATICFILES_DIRS = [
-    BASE_DIR / 'static',  # Additional locations for static files
+    BASE_DIR / 'static',
 ]
 
 # -----------------------------------------------------------------------------

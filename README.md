@@ -100,35 +100,30 @@ The project uses environment variables stored in a `.env` file for sensitive set
 cp .env.example .env
 ```
 
-2. The `.env.example` file is preconfigured for **SQLite**, which is the default database for development. If you wish to use a different database, such as **PostgreSQL** or **MySQL**, the `.env.example` file already includes placeholders for the necessary configurations. For example:
+2. The [.env.example](.env.example) file is preconfigured for **SQLite** (default for local development). If you wish to use **PostgreSQL** or **MySQL**, you can set the `DATABASE_URL` environment variable or directly configure the database settings by uncommenting and modifying the appropriate lines. The configuration for all three options (SQLite, PostgreSQL, MySQL) is included in the [.env.example](.env.example) file:
 
-    - **SQLite** (Default Configuration):
+    - **SQLite** (default configuration for local development):
     ```bash
     DATABASE_ENGINE=django.db.backends.sqlite3
-    DATABASE_NAME=db.sqlite3  # SQLite file or database name for other databases
-    DATABASE_USER=  # Leave empty for SQLite
-    DATABASE_PASSWORD=  # Leave empty for SQLite
-    DATABASE_HOST=  # Leave empty for SQLite
-    DATABASE_PORT=  # Leave empty for SQLite
+    DATABASE_NAME=db.sqlite3  # SQLite database file (default name)
     ```
     - **PostgreSQL**:
     ```bash
-    DATABASE_ENGINE=django.db.backends.postgresql
-    DATABASE_NAME=mydatabase  # Example: mydatabase (your PostgreSQL database name)
-    DATABASE_USER=myuser  # Example: myuser (your PostgreSQL username)
-    DATABASE_PASSWORD=mypassword  # Example: mypassword (your PostgreSQL password)
-    DATABASE_HOST=localhost  # Example: localhost or your database host
-    DATABASE_PORT=5432  # Default port for PostgreSQL
+    # DATABASE_URL=postgresql://<DB_USER>:<DB_PASSWORD>@<DB_HOST>:<DB_PORT>/<DB_NAME>  # Uncomment this line to use PostgreSQL
     ```
+    If using PostgreSQL, ensure that the `DATABASE_URL` is set correctly. If `DATABASE_URL` is not set, you can configure PostgreSQL directly by uncommenting the PostgreSQL configuration block.
     - **MySQL**:
     ```bash
-    DATABASE_ENGINE=django.db.backends.mysql
-    DATABASE_NAME=mydatabase  # Example: mydatabase (your MySQL database name)
-    DATABASE_USER=myuser  # Example: myuser (your MySQL username)
-    DATABASE_PASSWORD=mypassword  # Example: mypassword (your MySQL password)
-    DATABASE_HOST=localhost  # Example: localhost or your database host
-    DATABASE_PORT=3306  # Default port for MySQL
+    # DATABASE_ENGINE=django.db.backends.mysql  # Uncomment this line to use MySQL
+    # DATABASE_NAME=<DB_NAME>  # Example: my_database_name
+    # DATABASE_USER=<DB_USER>  # Example: my_database_user
+    # DATABASE_PASSWORD=<DB_PASSWORD>  # Example: my_secure_password
+    # DATABASE_HOST=<DB_HOST>  # Example: randomhost12345.com
+    # DATABASE_PORT=<DB_PORT>  # Example: 3306
     ```
+    If you choose to use MySQL, uncomment the MySQL configuration block and update the details.
+
+By default, if neither DATABASE_URL nor the direct database settings are provided, SQLite will be used.
 
 Update the `.env` file with your desired database settings based on these examples.
 
