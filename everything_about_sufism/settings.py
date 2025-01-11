@@ -188,14 +188,14 @@ STATIC_URL = '/static/'
 # Directory where collected static files are stored
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
-# If not in DEBUG mode (production), use WhiteNoise for optimized static file handling
-if not DEBUG:
-    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-
 # Additional locations for static files
 STATICFILES_DIRS = [
     BASE_DIR / 'static',
 ]
+
+# If not in DEBUG mode (production), use WhiteNoise for optimized static file handling
+if not DEBUG:
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # -----------------------------------------------------------------------------
 # Media Files
