@@ -13,7 +13,7 @@ Next, create a new branch for your changes. This keeps your contributions separa
 Now, make your changes in the new branch. Be sure to follow the coding style of the project and write clear, concise commit messages explaining the purpose of your changes.
 
 ### 4. Test Your Changes
-Make sure your changes work as expected by running tests and verifying the functionality locally. If you’ve added new features or fixed bugs, remember to write tests for them as well.
+There might not be tests in place yet, but it is highly recommended to add tests when introducing new features or bug fixes. You can reach out to the project owner for guidance on the testing framework and how to write tests for the project.
 
 ### 5. Commit Your Changes
 Once you're satisfied with your changes, commit them. Ensure your commit message is clear and follows this structure:
