@@ -1,6 +1,8 @@
+import cloudinary
 from pathlib import Path
 
 from django.contrib.auth.models import User
+from django.conf import settings
 from django.db.models.signals import post_delete, post_save, pre_save
 from django.dispatch import receiver
 
@@ -18,7 +20,7 @@ def create_user_profile(sender, instance, created, **kwargs):
 @receiver(pre_save, sender=Profile)
 def delete_old_profile_image(sender, instance, **kwargs):
     """
-    Deletes the old profile image file from the filesystem
+    Deletes the old profile image file from Cloudinary or local filesystem
     if a new image is being uploaded and it differs from the old one.
     """
 
@@ -39,9 +41,18 @@ def delete_old_profile_image(sender, instance, **kwargs):
     if old_image and old_image.name != new_image.name:
         # Ensure we don't delete the default image
         if old_image.name != 'default_profile_pic.jpg':
-            old_image_path = Path(old_image.path)
-            if old_image_path.is_file():  # Check if the file exists
-                old_image_path.unlink()  # Delete the old file
+            if settings.USE_CLOUDINARY:  # If Cloudinary is used
+                # Extract the public_id from the Cloudinary URL (name part)
+                public_id = old_image.name
+                try:
+                    # Delete image from Cloudinary
+                    cloudinary.api.delete_resources([public_id])
+                except cloudinary.api.Error as e:
+                    print(f"Error deleting image from Cloudinary: {e}")
+            else:  # If local file system is used
+                old_image_path = Path(old_image.path)
+                if old_image_path.is_file():  # Check if the file exists
+                    old_image_path.unlink()  # Delete the file
 
 
 @receiver(post_delete, sender=User)
@@ -54,15 +65,23 @@ def delete_user_profile(sender, instance, **kwargs):
 @receiver(post_delete, sender=Profile)
 def delete_profile_image_on_profile_delete(sender, instance, **kwargs):
     """
-    Deletes the profile image file from the filesystem
+    Deletes the profile image file from Cloudinary or local filesystem
     when the profile is deleted.
     """
 
     if instance.image and instance.image.name != 'default_profile_pic.jpg':
-        # If the profile has an image and it's not the default, delete it
-        image_path = Path(instance.image.path)
-        if image_path.is_file():  # Check if the file exists
-            image_path.unlink()  # Delete the file
+        if settings.USE_CLOUDINARY:  # If Cloudinary is used
+            # Extract the public_id from the Cloudinary URL (name part)
+            public_id = instance.image.name
+            try:
+                # Delete image from Cloudinary
+                cloudinary.api.delete_resources([public_id])
+            except cloudinary.api.Error as e:
+                print(f"Error deleting image from Cloudinary: {e}")
+        else:  # If local file system is used
+            image_path = Path(instance.image.path)
+            if image_path.is_file():  # Check if the file exists
+                image_path.unlink()  # Delete the file
 
 
 @receiver(post_save, sender=Follow)

@@ -54,6 +54,11 @@ The primary goal of the **Everything About Sufism** platform is to bring togethe
 - **sqlparse (0.5.3)**: Library for parsing SQL statements.
 - **tzdata (2024.2)**: Timezone data for handling time-related functionalities.
 
+### Cloud and Media Management
+- **Cloudinary:** Used for handling media files (images, videos) in production when `USE_CLOUDINARY=True`.
+    - **cloudinary_storage:** Used to handle media file storage via Cloudinary in the Django project.
+- **Local Media Storage:** When `USE_CLOUDINARY=False`, media files are saved locally under `MEDIA_ROOT`.
+
 ### Custom Features and Middleware
 - **Custom Middleware:** Includes:
     - **UnreadMessagesMiddleware:** Tracks unread messages for users.
@@ -100,7 +105,7 @@ The project uses environment variables stored in a `.env` file for sensitive set
 cp .env.example .env
 ```
 
-2. The [.env.example](.env.example) file is preconfigured for **SQLite** (default for local development). If you wish to use **PostgreSQL** or **MySQL**, you can set the `DATABASE_URL` environment variable or directly configure the database settings by uncommenting and modifying the appropriate lines. The configuration for all three options (SQLite, PostgreSQL, MySQL) is included in the [.env.example](.env.example) file:
+2. The [.env.example](.env.example) file is preconfigured for **SQLite** (default for local development). If you wish to use **PostgreSQL** or **MySQL**, you can set the `DATABASE_URL` environment variable or directly configure the database settings by uncommenting and modifying the appropriate lines. The configuration for all three options (SQLite, PostgreSQL, MySQL):
 
     - **SQLite** (default configuration for local development):
     ```bash

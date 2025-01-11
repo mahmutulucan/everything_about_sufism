@@ -68,15 +68,19 @@ urlpatterns = [
 ]
    
 # Serve media files
-urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-
+if settings.DEBUG or not settings.USE_CLOUDINARY:
+    # In development or when Cloudinary is not used,
+    # serve media files from MEDIA_ROOT
+    urlpatterns += static(settings.MEDIA_URL, 
+                          document_root=settings.MEDIA_ROOT)
 
 # Serve static files
 if settings.DEBUG:
-    # Serve static files during development from STATICFILES_DIRS
-    urlpatterns += static(settings.STATIC_URL,
-                          document_root=settings.STATICFILES_DIRS[0])
+    if settings.STATICFILES_DIRS:
+        # During development, serve static files from STATICFILES_DIRS
+        urlpatterns += static(settings.STATIC_URL, 
+                              document_root=settings.STATICFILES_DIRS[0])
 else:
-    # Serve static files in production from STATIC_ROOT
+    # In production, serve static files from STATIC_ROOT
     urlpatterns += static(settings.STATIC_URL,
                           document_root=settings.STATIC_ROOT)

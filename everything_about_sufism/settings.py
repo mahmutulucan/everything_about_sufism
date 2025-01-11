@@ -59,6 +59,8 @@ INSTALLED_APPS = [
     'crispy_forms',
     'crispy_bootstrap5',
     'django_ckeditor_5',
+    'cloudinary',
+    'cloudinary_storage',
 
     # Django default apps
     'django.contrib.admin',
@@ -198,9 +200,20 @@ STATICFILES_DIRS = [
 # -----------------------------------------------------------------------------
 # Media Files
 # -----------------------------------------------------------------------------
-MEDIA_URL = '/media/'  # URL for media files
-# Directory where uploaded media files are stored
-MEDIA_ROOT = BASE_DIR / 'media'
+
+# Media URL (same for both local and Cloudinary environments)
+MEDIA_URL = '/media/'
+
+# Environment check: Is it LOCAL or PRODUCTION?
+USE_CLOUDINARY = os.getenv('USE_CLOUDINARY', 'False') == 'True'
+
+if USE_CLOUDINARY:
+    # Cloudinary settings
+    CLOUDINARY_URL = os.getenv('CLOUDINARY_URL')
+    DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+else:
+    # Local media settings
+    MEDIA_ROOT = BASE_DIR / 'media'
 
 # -----------------------------------------------------------------------------
 # Default Primary Key Field Type. Use BigAutoField for primary keys.
@@ -341,13 +354,43 @@ LOGIN_URL = '/user/login/'
 # URL to redirect users to after a successful login
 LOGIN_REDIRECT_URL = '/'
 
+# -----------------------------------------------------------------------------
 # Security settings for production: control cookie and security-related flags
-CSRF_COOKIE_SECURE = os.getenv('CSRF_COOKIE_SECURE', 'False') == 'True'
-SECURE_BROWSER_XSS_FILTER = (
-    os.getenv('SECURE_BROWSER_XSS_FILTER', 'False') == 'True'
-)
-SECURE_CONTENT_TYPE_NOSNIFF = (
-    os.getenv('SECURE_CONTENT_TYPE_NOSNIFF', 'False') == 'True'
-)
-SECURE_SSL_REDIRECT = os.getenv('SECURE_SSL_REDIRECT', 'False') == 'True'
-SESSION_COOKIE_SECURE = os.getenv('SESSION_COOKIE_SECURE', 'False') == 'True'
+# -----------------------------------------------------------------------------
+
+# Set flags based on environment (DEBUG = True for local, False for prod)
+CSRF_COOKIE_SECURE = False if DEBUG else True
+SESSION_COOKIE_SECURE = False if DEBUG else True
+SECURE_BROWSER_XSS_FILTER = False if DEBUG else True
+SECURE_CONTENT_TYPE_NOSNIFF = False if DEBUG else True
+SECURE_SSL_REDIRECT = False if DEBUG else True
+SESSION_COOKIE_HTTPONLY = False if DEBUG else True
+
+# Security headers active only in production
+if not DEBUG:
+    SECURE_HSTS_SECONDS = 31536000  # Enforces HTTPS for 1 year
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True  # Enforces HTTPS for subdomains
+    SECURE_HSTS_PRELOAD = True  # Adds site to HSTS preload list
+
+    X_FRAME_OPTIONS = 'DENY'  # Prevents site from being embedded in iframe
+    X_CONTENT_TYPE_OPTIONS = 'nosniff'  # Prevents content type sniffing
+
+# -----------------------------------------------------------------------------
+# Basic Logging Configuration
+# -----------------------------------------------------------------------------
+
+# Logs WARNING and above messages to the console, suitable for all environments
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'WARNING',
+    },
+}
