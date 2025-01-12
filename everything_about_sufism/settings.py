@@ -73,6 +73,9 @@ INSTALLED_APPS = [
 
 # Middleware configuration for handling requests and responses
 MIDDLEWARE = [
+    # WhiteNoise middleware for serving static files efficiently
+    'whitenoise.middleware.WhiteNoiseMiddleware',
+
     # Django default middleware
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -87,10 +90,6 @@ MIDDLEWARE = [
     'user.middleware.UnreadNotificationsMiddleware',
     'user.middleware.VerificationRequiredMiddleware',
 ]
-
-# Add WhiteNoise middleware only in production (when DEBUG is False)
-if not DEBUG:
-    MIDDLEWARE.insert(0, 'whitenoise.middleware.WhiteNoiseMiddleware')
 
 # Project URL configuration
 ROOT_URLCONF = 'everything_about_sufism.urls'
@@ -137,7 +136,6 @@ else:
             'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
         }
     }
-
 
 # -----------------------------------------------------------------------------
 # Password Validation for ensuring strong passwords in user authentication
@@ -193,9 +191,8 @@ STATICFILES_DIRS = [
     BASE_DIR / 'static',
 ]
 
-# If not in DEBUG mode (production), use WhiteNoise for optimized static file handling
-if not DEBUG:
-    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+# Use WhiteNoise for efficient static file handling and caching
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # -----------------------------------------------------------------------------
 # Media Files
