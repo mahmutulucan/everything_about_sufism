@@ -6,7 +6,7 @@ set -o errexit
 pip install -r requirements.txt
 
 # Convert static asset files
-python manage.py collectstatic --no-input
+python manage.py collectstatic --clear --noinput --verbosity 3
 
 # Apply any outstanding database migrations
 python manage.py migrate
