@@ -81,6 +81,5 @@ if settings.DEBUG:
         urlpatterns += static(settings.STATIC_URL, 
                               document_root=settings.STATICFILES_DIRS[0])
 else:
-    # In production, serve static files from STATIC_ROOT
-    urlpatterns += static(settings.STATIC_URL,
-                          document_root=settings.STATIC_ROOT)
+    # In production, static files will be handled by WhiteNoise automatically
+    pass
