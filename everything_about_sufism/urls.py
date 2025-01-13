@@ -68,9 +68,8 @@ urlpatterns = [
 ]
    
 # Serve media files
-if settings.DEBUG or not settings.USE_CLOUDINARY:
-    # In development or when Cloudinary is not used,
-    # serve media files from MEDIA_ROOT
+if not settings.USE_CLOUDINARY:
+    # Serve media files from MEDIA_ROOT if Cloudinary is not used.
     urlpatterns += static(settings.MEDIA_URL, 
                           document_root=settings.MEDIA_ROOT)
 
