@@ -196,6 +196,14 @@ STATICFILES_DIRS = [
 if not DEBUG:
     STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
+STATICFILES_FINDERS = [
+    # Finds static files in STATICFILES_DIRS and STATIC_ROOT
+    'django.contrib.staticfiles.finders.FileSystemFinder',  
+
+    # Finds static files in each app's 'static' directory
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',  
+]
+
 # -----------------------------------------------------------------------------
 # Media Files
 # -----------------------------------------------------------------------------
