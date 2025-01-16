@@ -54,3 +54,6 @@ Thumbs.db
 
 # SQLite database file (added to ignore db.sqlite3)
 db.sqlite3
+
+# Static files directory
+staticfiles/

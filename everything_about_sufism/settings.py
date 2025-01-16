@@ -188,19 +188,11 @@ STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 # Additional locations for static files
-STATICFILES_DIRS = [BASE_DIR / 'my_static',]
+STATICFILES_DIRS = [BASE_DIR / 'static',]
 
 # If not in DEBUG mode (production), use WhiteNoise for optimized static file handling
 if not DEBUG:
     STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-
-STATICFILES_FINDERS = [
-    # Finds static files in STATICFILES_DIRS and STATIC_ROOT
-    'django.contrib.staticfiles.finders.FileSystemFinder',  
-
-    # Finds static files in each app's 'static' directory
-    'django.contrib.staticfiles.finders.AppDirectoriesFinder',  
-]
 
 # -----------------------------------------------------------------------------
 # Media Files

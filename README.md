@@ -172,7 +172,7 @@ python manage.py collectstatic
 ```
 This will gather all static files, including those from third-party apps like **django-ckeditor-5** and Django's admin interface, into the `STATIC_ROOT` directory.
 
-**Note:** This step is required for CKEditor and other static files to work properly, even during development.
+**Note:** This step is required, especially in the production environment, to properly serve static files.
 
 **Note:** The `staticfiles/` folder is excluded from version control via `.gitignore` to reduce repository size.
 
