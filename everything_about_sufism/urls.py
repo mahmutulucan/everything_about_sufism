@@ -75,10 +75,7 @@ if settings.DEBUG:
                               document_root=settings.STATICFILES_DIRS[0])
 
     # Serve media files based on the USE_CLOUDINARY setting
-    if settings.USE_CLOUDINARY:
-        # If Cloudinary is used, media files are managed by Cloudinary
-        pass  # Cloudinary automatically handles media file management
-    else:
+    if not settings.USE_CLOUDINARY:
         # If not using Cloudinary, serve media files from MEDIA_ROOT
         urlpatterns += static(settings.MEDIA_URL, 
                               document_root=settings.MEDIA_ROOT)
