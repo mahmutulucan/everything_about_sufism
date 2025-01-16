@@ -77,7 +77,7 @@ def delete_old_content_image(sender, instance, **kwargs):
 
     # Check if the new image is different from the old image
     if old_image and old_image.name != new_image.name:
-        if settings.USE_CLOUDINARY:  # If Cloudinary is used
+        if not settings.DEBUG:  # If Cloudinary is used
             # Extract the public_id from the Cloudinary URL (name part)
             public_id = old_image.name
             try:
@@ -99,7 +99,7 @@ def delete_content_image_on_content_delete(sender, instance, **kwargs):
     """
 
     if instance.content_image:
-        if settings.USE_CLOUDINARY:  # If Cloudinary is used
+        if not settings.DEBUG:  # If Cloudinary is used
             # Extract the public_id from the Cloudinary URL (name part)
             public_id = instance.content_image.name
             try:

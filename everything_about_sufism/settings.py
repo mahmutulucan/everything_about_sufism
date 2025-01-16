@@ -178,38 +178,29 @@ USE_L10N = True  # Format dates and numbers according to the current locale.
 USE_TZ = True  # Enable timezone support.
 
 # -----------------------------------------------------------------------------
-# Static Files (CSS, JavaScript, Images)
+# Static and Media Files (CSS, JavaScript, Images)
 # -----------------------------------------------------------------------------
 
-# URL for static files
+# Static Files (CSS, JavaScript, Images)
 STATIC_URL = '/static/'
-
-# Directory where collected static files are stored
 STATIC_ROOT = BASE_DIR / 'staticfiles'
-
-# Additional locations for static files
 STATICFILES_DIRS = [BASE_DIR / 'static',]
 
-# If not in DEBUG mode (production), use WhiteNoise for optimized static file handling
-if not DEBUG:
-    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-
-# -----------------------------------------------------------------------------
 # Media Files
-# -----------------------------------------------------------------------------
-
-# Environment check: Is it LOCAL or PRODUCTION?
-USE_CLOUDINARY = os.getenv('USE_CLOUDINARY', 'False') == 'True'
-
-if USE_CLOUDINARY:
-    # Cloudinary settings
-    CLOUDINARY_URL = os.getenv('CLOUDINARY_URL')
-    DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
-    STATICFILES_STORAGE = 'cloudinary_storage.storage.StaticCloudinaryStorage'
-else:
-    # Local media settings
+# Development environment (DEBUG True)
+if DEBUG:
     MEDIA_URL = '/media/'
     MEDIA_ROOT = BASE_DIR / 'media'
+    DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
+    STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
+ # Production environment (DEBUG False)
+else:
+    # Cloudinary settings for media files
+    CLOUDINARY_URL = os.getenv('CLOUDINARY_URL')
+    DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+    
+    # Use WhiteNoise for optimized static files handling in production
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # -----------------------------------------------------------------------------
 # Default Primary Key Field Type. Use BigAutoField for primary keys.

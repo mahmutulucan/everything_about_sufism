@@ -74,11 +74,6 @@ if settings.DEBUG:
         urlpatterns += static(settings.STATIC_URL, 
                               document_root=settings.STATICFILES_DIRS[0])
 
-    # Serve media files based on the USE_CLOUDINARY setting
-    if not settings.USE_CLOUDINARY:
-        # If not using Cloudinary, serve media files from MEDIA_ROOT
-        urlpatterns += static(settings.MEDIA_URL, 
-                              document_root=settings.MEDIA_ROOT)
-
-# Production mode: No need for static or media file serving here
-# Static files are handled by WhiteNoise or the web server
+    # Serve media files from MEDIA_ROOT in development mode
+    urlpatterns += static(settings.MEDIA_URL, 
+                          document_root=settings.MEDIA_ROOT)
