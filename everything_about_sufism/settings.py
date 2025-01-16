@@ -198,9 +198,6 @@ if not DEBUG:
 # Media Files
 # -----------------------------------------------------------------------------
 
-# Media URL (same for both local and Cloudinary environments)
-MEDIA_URL = '/media/'
-
 # Environment check: Is it LOCAL or PRODUCTION?
 USE_CLOUDINARY = os.getenv('USE_CLOUDINARY', 'False') == 'True'
 
@@ -211,6 +208,7 @@ if USE_CLOUDINARY:
     STATICFILES_STORAGE = 'cloudinary_storage.storage.StaticCloudinaryStorage'
 else:
     # Local media settings
+    MEDIA_URL = '/media/'
     MEDIA_ROOT = BASE_DIR / 'media'
 
 # -----------------------------------------------------------------------------
