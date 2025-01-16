@@ -216,6 +216,7 @@ if USE_CLOUDINARY:
     # Cloudinary settings
     CLOUDINARY_URL = os.getenv('CLOUDINARY_URL')
     DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+    STATICFILES_STORAGE = 'cloudinary_storage.storage.StaticCloudinaryStorage'
 else:
     # Local media settings
     MEDIA_ROOT = BASE_DIR / 'media'
