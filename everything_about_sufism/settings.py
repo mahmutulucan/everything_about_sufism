@@ -186,21 +186,15 @@ STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_DIRS = [BASE_DIR / 'static',]
 
+# Use WhiteNoise for serving static files
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
 # Media Files
-# Development environment (DEBUG True)
-if DEBUG:
-    MEDIA_URL = '/media/'
-    MEDIA_ROOT = BASE_DIR / 'media'
-    DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
-    STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
- # Production environment (DEBUG False)
-else:
-    # Cloudinary settings for media files
-    CLOUDINARY_URL = os.getenv('CLOUDINARY_URL')
-    DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
-    
-    # Use WhiteNoise for optimized static files handling in production
-    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+MEDIA_URL = '/media/'
+
+# Cloudinary settings for media file storage
+CLOUDINARY_URL = os.getenv('CLOUDINARY_URL')
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 # -----------------------------------------------------------------------------
 # Default Primary Key Field Type. Use BigAutoField for primary keys.
