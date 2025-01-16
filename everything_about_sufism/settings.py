@@ -188,9 +188,7 @@ STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 # Additional locations for static files
-STATICFILES_DIRS = [
-    BASE_DIR / 'static',
-]
+STATICFILES_DIRS = [BASE_DIR / 'my_static',]
 
 # If not in DEBUG mode (production), use WhiteNoise for optimized static file handling
 if not DEBUG:

@@ -12,9 +12,6 @@ python_env/
 # Media files (uploaded by users)
 media/
 
-# Static files (collected static files)
-staticfiles/
-
 # Django migrations (except __init__.py)
 **/migrations/*
 !**/migrations/__init__.py
