@@ -184,18 +184,15 @@ USE_TZ = True  # Enable timezone support.
 # URL for static files
 STATIC_URL = '/static/'
 
-# Directory where collected static files are stored
-STATIC_ROOT = BASE_DIR / 'staticfiles'
-
 # Additional locations for static files
 STATICFILES_DIRS = [BASE_DIR / 'static',]
 
 # In production, use WhiteNoise for optimized static file handling
 if not DEBUG:
+    # Directory where collected static files are stored
+    STATIC_ROOT = BASE_DIR / 'staticfiles'
     STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-else:
-    STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
-
+    
 # -----------------------------------------------------------------------------
 # Media Files
 # -----------------------------------------------------------------------------
@@ -206,11 +203,9 @@ MEDIA_URL = '/media/'
 if DEBUG:
     # Local media storage for development
     MEDIA_ROOT = BASE_DIR / 'media'
-    DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
 else:
     # Cloudinary media settings for production
     CLOUDINARY_URL = os.getenv('CLOUDINARY_URL')
-    DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 # -----------------------------------------------------------------------------
 # Default Primary Key Field Type. Use BigAutoField for primary keys.
