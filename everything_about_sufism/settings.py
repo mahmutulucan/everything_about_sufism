@@ -200,6 +200,9 @@ else:
 # Media Files
 # ----------------------------------------------------------------------------- 
 
+# Media URL (same for both local and Cloudinary environments)
+MEDIA_URL = '/media/'
+
 USE_CLOUDINARY = os.getenv('USE_CLOUDINARY', 'False') == 'True'
 
 if USE_CLOUDINARY:
@@ -210,7 +213,6 @@ if USE_CLOUDINARY:
 else:
     # Local media settings for development
     MEDIA_ROOT = BASE_DIR / 'media'
-    MEDIA_URL = '/media/'
     DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
 
 # -----------------------------------------------------------------------------
