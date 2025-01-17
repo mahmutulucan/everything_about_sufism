@@ -66,14 +66,12 @@ urlpatterns = [
         auth_views.PasswordResetCompleteView.as_view(),
         name='password_reset_complete'),  # Path for password reset completion
 ]
-   
-# Development mode: Serve static and media files directly
+
 if settings.DEBUG:
-    # Serve static files from STATICFILES_DIRS if available
-    if settings.STATICFILES_DIRS:
-        urlpatterns += static(settings.STATIC_URL, 
+    # Serve static files in development from the first STATICFILES_DIRS
+    urlpatterns += static(settings.STATIC_URL, 
                               document_root=settings.STATICFILES_DIRS[0])
 
-    # Serve media files from MEDIA_ROOT in development mode
+    # In development, serve media files from MEDIA_ROOT
     urlpatterns += static(settings.MEDIA_URL, 
                           document_root=settings.MEDIA_ROOT)
