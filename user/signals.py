@@ -41,7 +41,7 @@ def delete_old_profile_image(sender, instance, **kwargs):
     if old_image and old_image.name != new_image.name:
         # Ensure we don't delete the default image
         if old_image.name != 'default_profile_pic.jpg':
-            if not settings.DEBUG:  # If Cloudinary is used
+            if settings.USE_CLOUDINARY:  # If Cloudinary is used
                 # Extract the public_id from the Cloudinary URL (name part)
                 public_id = old_image.name
                 try:
@@ -70,7 +70,7 @@ def delete_profile_image_on_profile_delete(sender, instance, **kwargs):
     """
 
     if instance.image and instance.image.name != 'default_profile_pic.jpg':
-        if not settings.DEBUG:  # If Cloudinary is used
+        if settings.USE_CLOUDINARY:  # If Cloudinary is used
             # Extract the public_id from the Cloudinary URL (name part)
             public_id = instance.image.name
             try:

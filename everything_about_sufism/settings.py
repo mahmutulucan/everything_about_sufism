@@ -177,35 +177,43 @@ USE_I18N = True  # Enable Django’s internationalization framework.
 USE_L10N = True  # Format dates and numbers according to the current locale.
 USE_TZ = True  # Enable timezone support.
 
-# -----------------------------------------------------------------------------
+# ----------------------------------------------------------------------------- 
 # Static Files (CSS, JavaScript, Images)
-# -----------------------------------------------------------------------------
+# ----------------------------------------------------------------------------- 
 
 # URL for static files
 STATIC_URL = '/static/'
+
+# Directory where collected static files are stored
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 # Additional locations for static files
 STATICFILES_DIRS = [BASE_DIR / 'static',]
 
 # In production, use WhiteNoise for optimized static file handling
 if not DEBUG:
-    # Directory where collected static files are stored
-    STATIC_ROOT = BASE_DIR / 'staticfiles'
     STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-    
-# -----------------------------------------------------------------------------
+else:
+    STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
+
+# ----------------------------------------------------------------------------- 
 # Media Files
-# -----------------------------------------------------------------------------
+# ----------------------------------------------------------------------------- 
 
 # Media URL (same for both local and Cloudinary environments)
 MEDIA_URL = '/media/'
 
-if DEBUG:
-    # Local media storage for development
-    MEDIA_ROOT = BASE_DIR / 'media'
-else:
-    # Cloudinary media settings for production
+USE_CLOUDINARY = os.getenv('USE_CLOUDINARY', 'False') == 'True'
+
+if USE_CLOUDINARY:
+    # Cloudinary settings for media files
     CLOUDINARY_URL = os.getenv('CLOUDINARY_URL')
+    DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+    STATICFILES_STORAGE = 'cloudinary_storage.storage.StaticCloudinaryStorage'
+else:
+    # Local media settings for development
+    MEDIA_ROOT = BASE_DIR / 'media'
+    DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
 
 # -----------------------------------------------------------------------------
 # Default Primary Key Field Type. Use BigAutoField for primary keys.
