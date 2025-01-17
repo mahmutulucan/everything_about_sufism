@@ -205,14 +205,11 @@ USE_CLOUDINARY = os.getenv('USE_CLOUDINARY', 'False') == 'True'
 if USE_CLOUDINARY:
     # Cloudinary settings for media files
     CLOUDINARY_URL = os.getenv('CLOUDINARY_URL')
-    DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
     STATICFILES_STORAGE = 'cloudinary_storage.storage.StaticCloudinaryStorage'
-    MEDIA_URL = os.getenv('CLOUDINARY_MEDIA_URL')
 else:
     # Local media settings for development
     MEDIA_ROOT = BASE_DIR / 'media'
     MEDIA_URL = '/media/'
-    DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
 
 # -----------------------------------------------------------------------------
 # Default Primary Key Field Type. Use BigAutoField for primary keys.
