@@ -1,30 +1,9 @@
-import uuid
-from pathlib import Path
-
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.utils.text import slugify
 
+from cloudinary.models import CloudinaryField
 from django_ckeditor_5.fields import CKEditor5Field
-
-
-def content_image_directory_path(instance, filename):
-    """
-    Generate a unique file path for content images using UUID 
-    
-    to ensure uniqueness. Uses original filename and UUID to avoid conflicts.
-    """
-
-    base_filename, file_extension = Path(filename).stem, Path(filename).suffix
-
-    unique_id = uuid.uuid4()
-
-    new_filename = (
-        f'content_{unique_id}_{slugify(base_filename)}{file_extension}'
-    )
-
-    return Path('content_images') / new_filename 
 
 
 class Content(models.Model):
@@ -108,12 +87,10 @@ class Content(models.Model):
         default=0,
         verbose_name='Views Count',
     )
-    content_image = models.ImageField(
-        upload_to=content_image_directory_path,  # Content-specific upload path
+    content_image = CloudinaryField(
+        'content_image',
         null=True,
         blank=True,
-        verbose_name='Content Image',
-        help_text='Upload an image for the content.',
     )
 
     def __str__(self):

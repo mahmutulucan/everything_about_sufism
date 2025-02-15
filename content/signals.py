@@ -1,7 +1,5 @@
 import cloudinary
-from pathlib import Path
 
-from django.conf import settings
 from django.contrib.auth.models import User
 from django.db.models.signals import post_delete, post_save, pre_delete, pre_save
 from django.dispatch import receiver
@@ -58,8 +56,7 @@ def create_notification_on_like(sender, instance, created, **kwargs):
 @receiver(pre_save, sender=Content)
 def delete_old_content_image(sender, instance, **kwargs):
     """
-    Deletes the old content image file from Cloudinary or local filesystem
-    if a new image is being uploaded and it differs from the old one.
+    Deletes the old content image from Cloudinary if a new image is uploaded.
     """
 
     if not instance.pk:
@@ -76,38 +73,28 @@ def delete_old_content_image(sender, instance, **kwargs):
     new_image = instance.content_image
 
     # Check if the new image is different from the old image
-    if old_image and old_image.name != new_image.name:
-        if settings.USE_CLOUDINARY:  # If Cloudinary is used
-            # Extract the public_id from the Cloudinary URL (name part)
-            public_id = old_image.name
+    if old_image and new_image and old_image != new_image:
+        # Only delete if a new image is being uploaded and it's different
+        if old_image.public_id != 'default_content_image.jpg':  # default image check if needed
+            # Extract the public_id from the Cloudinary object
+            public_id = old_image.public_id
             try:
                 # Delete image from Cloudinary
                 cloudinary.api.delete_resources([public_id])
             except cloudinary.api.Error as e:
                 print(f"Error deleting image from Cloudinary: {e}")
-        else:  # If local file system is used
-            old_image_path = Path(old_image.path)
-            if old_image_path.is_file():  # Check if the file exists
-                old_image_path.unlink()  # Delete the file
 
 
 @receiver(post_delete, sender=Content)
 def delete_content_image_on_content_delete(sender, instance, **kwargs):
     """
-    Deletes the content image file from Cloudinary or local filesystem
-    when the content is deleted.
+    Deletes the content image file from Cloudinary when the content is deleted.
     """
-
-    if instance.content_image:
-        if settings.USE_CLOUDINARY:  # If Cloudinary is used
-            # Extract the public_id from the Cloudinary URL (name part)
-            public_id = instance.content_image.name
-            try:
-                # Delete image from Cloudinary
-                cloudinary.api.delete_resources([public_id])
-            except cloudinary.api.Error as e:
-                print(f"Error deleting image from Cloudinary: {e}")
-        else:  # If local file system is used
-            image_path = Path(instance.content_image.path)
-            if image_path.is_file():  # Check if the file exists
-                image_path.unlink()  # Delete the file
+    if instance.content_image and instance.content_image.public_id != 'default_content_image.jpg':
+        # Extract the public_id from the Cloudinary object
+        public_id = instance.content_image.public_id
+        try:
+            # Delete image from Cloudinary
+            cloudinary.api.delete_resources([public_id])
+        except cloudinary.api.Error as e:
+            print(f"Error deleting image from Cloudinary: {e}")

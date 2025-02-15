@@ -42,7 +42,7 @@ if SECRET_KEY is None:
     )
 
 # Set debug mode based on environment variable. Avoid enabling in production.
-DEBUG = os.getenv('DEBUG', 'False') == 'True'
+DEBUG = os.getenv('DEBUG', 'False').lower() == 'true'
 
 # List of allowed host/domain names for this Django site.
 # Important for production to prevent HTTP Host header attacks.
@@ -55,13 +55,6 @@ INSTALLED_APPS = [
     'content',
     'user',
 
-    # Third-party apps
-    'crispy_forms',
-    'crispy_bootstrap5',
-    'django_ckeditor_5',
-    'cloudinary',
-    'cloudinary_storage',
-
     # Django default apps
     'django.contrib.admin',
     'django.contrib.auth',
@@ -69,6 +62,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    # Third-party apps
+    'crispy_forms',
+    'crispy_bootstrap5',
+    'django_ckeditor_5',
+    'cloudinary',
+    'cloudinary_storage',
 ]
 
 # Middleware configuration for handling requests and responses
@@ -126,7 +126,7 @@ database_url = os.getenv("DATABASE_URL")
 # If DATABASE_URL is set, use PostgreSQL
 if database_url:
     DATABASES = {
-        'default': dj_database_url.parse(database_url, conn_max_age=600)
+        'default': dj_database_url.config(default=database_url, conn_max_age=600)
     }
 
 # If DATABASE_URL is not set, use SQLite
@@ -193,32 +193,25 @@ STATICFILES_DIRS = [BASE_DIR / 'static',]
 # In production, use WhiteNoise for optimized static file handling
 if not DEBUG:
     STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-else:
-    STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
 
 # ----------------------------------------------------------------------------- 
-# Media Files
+# Cloudinary Settings
 # ----------------------------------------------------------------------------- 
 
-# Media URL (same for both local and Cloudinary environments)
-MEDIA_URL = '/media/'
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': os.getenv('CLOUDINARY_CLOUD_NAME'),
+    'API_KEY': os.getenv('CLOUDINARY_API_KEY'),
+    'API_SECRET': os.getenv('CLOUDINARY_API_SECRET')
+}
 
-USE_CLOUDINARY = os.getenv('USE_CLOUDINARY', 'False') == 'True'
-
-if USE_CLOUDINARY:
-    # Cloudinary settings for media files
-    CLOUDINARY_URL = os.getenv('CLOUDINARY_URL')
-    DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
-    STATICFILES_STORAGE = 'cloudinary_storage.storage.StaticCloudinaryStorage'
-else:
-    # Local media settings for development
-    MEDIA_ROOT = BASE_DIR / 'media'
-    DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 # -----------------------------------------------------------------------------
 # Default Primary Key Field Type. Use BigAutoField for primary keys.
 # -----------------------------------------------------------------------------
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+MEDIA_URL = '/media/'
 
 # -----------------------------------------------------------------------------
 # Third-Party App Settings

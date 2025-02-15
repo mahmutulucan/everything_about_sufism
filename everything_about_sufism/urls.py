@@ -67,21 +67,7 @@ urlpatterns = [
         name='password_reset_complete'),  # Path for password reset completion
 ]
    
-# Development mode: Serve static and media files directly
+# Development mode
 if settings.DEBUG:
-    # Serve static files from STATICFILES_DIRS if available
-    if settings.STATICFILES_DIRS:
-        urlpatterns += static(settings.STATIC_URL, 
+    urlpatterns += static(settings.STATIC_URL, 
                               document_root=settings.STATICFILES_DIRS[0])
-
-    # Serve media files based on the USE_CLOUDINARY setting
-    if settings.USE_CLOUDINARY:
-        # If Cloudinary is used, media files are managed by Cloudinary
-        pass  # Cloudinary automatically handles media file management
-    else:
-        # If not using Cloudinary, serve media files from MEDIA_ROOT
-        urlpatterns += static(settings.MEDIA_URL, 
-                              document_root=settings.MEDIA_ROOT)
-
-# Production mode: No need for static or media file serving here
-# Static files are handled by WhiteNoise or the web server

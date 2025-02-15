@@ -1,4 +1,3 @@
-from pathlib import Path
 import random
 import string
 
@@ -7,9 +6,9 @@ from django.contrib.auth.models import User
 from django.core.mail import send_mail
 from django.db import models
 from django.utils import timezone
-from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 
+from cloudinary.models import CloudinaryField
 from django_ckeditor_5.fields import CKEditor5Field
 
 from content.models import Comment, Content, Like
@@ -96,23 +95,6 @@ class Message(models.Model):
         return f"{self.subject} (Deleted User to Deleted User)"
 
 
-def user_directory_path(instance, filename):
-    """
-    Generate a unique file path for user profile images.
-
-    Uses user ID, username, and original filename to avoid conflicts.
-    """
-
-    base_filename, file_extension = Path(filename).stem, Path(filename).suffix
-
-    new_filename = (
-        f'user_{instance.user.id}_{slugify(instance.user.username)}_'
-        f'{slugify(base_filename)}{file_extension}'
-    )
-
-    return Path('profile_pics') / new_filename
-
-
 class Profile(models.Model):
     """Model for user profiles with additional information."""
 
@@ -166,12 +148,10 @@ class Profile(models.Model):
         help_text='Write a brief description about yourself.',
         config_name='extends',
     )
-    image = models.ImageField(
-        upload_to=user_directory_path,      # User-specific upload path.
+    image = CloudinaryField(
+        'image',
         null=True,
         blank=True,
-        verbose_name='Profile Image',
-        help_text='Upload a profile image.',
     )
 
     def __str__(self):
