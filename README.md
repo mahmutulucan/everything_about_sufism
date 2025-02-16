@@ -147,14 +147,14 @@ cp .env.example .env
 
 ### 5. Database Migrations:
 Apply the necessary migrations to set up your database schema:
-    1. **Create Migration Files:**
-    ```bash
-    python manage.py makemigrations
-    ```
-    2. **Apply Migrations:**
-    ```bash
-    python manage.py migrate
-    ```
+1. **Create Migration Files:**
+```bash
+python manage.py makemigrations
+```
+2. **Apply Migrations:**
+```bash
+python manage.py migrate
+```
 
 ### 6. Create a Superuser:
 Create a superuser (administrator) for the project:
