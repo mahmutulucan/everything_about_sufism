@@ -16,74 +16,86 @@
 {% block hero_buttons %}
     <!-- Filtering options container: Includes filter form and action buttons (Add Content, View Profile). -->
     <div class="container">
-        <div class="d-flex justify-content-start align-items-center mb-3">
+        <div class="row align-items-center g-2">
             <!-- Form for selecting content type to filter -->
-            <form action="{% url 'dashboard' %}" method="get" class="d-inline-block me-2">
-                <div class="dropdown">
-                    <!-- Button to display and select content types -->
-                    {% with content_type as current_type %}
-                        <button class="btn btn-primary dropdown-toggle" type="button" 
-                            data-bs-toggle="dropdown" aria-expanded="false">
-                            <!-- Display the selected content type or default message -->
-                            {% if current_type %}
-                                {% if current_type == "academic_article" %}Academic Article
-                                {% elif current_type == "insightful_essay" %}Insightful Essay
-                                {% elif current_type == "sufi_experience" %}Sufi Experience
-                                {% elif current_type == "question_answer" %}Question-Answer
-                                {% elif current_type == "book_review" %}Book/Article Review
-                                {% else %}Select content type
+            <div class="col-12 col-md-auto">
+                <form action="{% url 'dashboard' %}" method="get">
+                    <div class="dropdown">
+                        <!-- Button to display and select content types -->
+                        {% with content_type as current_type %}
+                            <button class="btn btn-primary dropdown-toggle w-100" type="button" 
+                                data-bs-toggle="dropdown" aria-expanded="false">
+                                <!-- Display the selected content type or default message -->
+                                {% if current_type %}
+                                    {% if current_type == "academic_article" %}Academic Article
+                                    {% elif current_type == "insightful_essay" %}Insightful Essay
+                                    {% elif current_type == "sufi_experience" %}Sufi Experience
+                                    {% elif current_type == "question_answer" %}Question-Answer
+                                    {% elif current_type == "book_review" %}Book/Article Review
+                                    {% else %}Select content type
+                                    {% endif %}
+                                {% else %}
+                                    Select content type
                                 {% endif %}
-                            {% else %}
-                                Select content type
-                            {% endif %}
-                        </button>
-                    {% endwith %}
+                            </button>
+                        {% endwith %}
 
-                    <!-- List of all content type options -->
-                    <ul class="dropdown-menu">
-                        <li>
-                            <button type="submit" class="dropdown-item" 
-                                name="content_type" value="">
-                                All Types
-                            </button>
-                        </li>
-                        <li>
-                            <button type="submit" class="dropdown-item" 
-                                name="content_type" value="academic_article">
-                                Academic Article
-                            </button>
-                        </li>
-                        <li>
-                            <button type="submit" class="dropdown-item" 
-                                name="content_type" value="insightful_essay">
-                                Insightful Essay
-                            </button>
-                        </li>
-                        <li>
-                            <button type="submit" class="dropdown-item" 
-                                name="content_type" value="sufi_experience">
-                                Sufi Experience
-                            </button>
-                        </li>
-                        <li>
-                            <button type="submit" class="dropdown-item" 
-                                name="content_type" value="question_answer">
-                                Question-Answer
-                            </button>
-                        </li>
-                        <li>
-                            <button type="submit" class="dropdown-item" 
-                                name="content_type" value="book_review">
-                                Book/Article Review
-                            </button>
-                        </li>
-                    </ul>
-                </div>
-            </form>
+                        <!-- List of all content type options -->
+                        <ul class="dropdown-menu">
+                            <li>
+                                <button type="submit" class="dropdown-item" 
+                                    name="content_type" value="">
+                                    All Types
+                                </button>
+                            </li>
+                            <li>
+                                <button type="submit" class="dropdown-item" 
+                                    name="content_type" value="academic_article">
+                                    Academic Article
+                                </button>
+                            </li>
+                            <li>
+                                <button type="submit" class="dropdown-item" 
+                                    name="content_type" value="insightful_essay">
+                                    Insightful Essay
+                                </button>
+                            </li>
+                            <li>
+                                <button type="submit" class="dropdown-item" 
+                                    name="content_type" value="sufi_experience">
+                                    Sufi Experience
+                                </button>
+                            </li>
+                            <li>
+                                <button type="submit" class="dropdown-item" 
+                                    name="content_type" value="question_answer">
+                                    Question-Answer
+                                </button>
+                            </li>
+                            <li>
+                                <button type="submit" class="dropdown-item" 
+                                    name="content_type" value="book_review">
+                                    Book/Article Review
+                                </button>
+                            </li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
 
-            <!-- Show "Add Content" and "View Profile" buttons -->
-            <a href="{% url 'add_content' %}" class="btn btn-primary me-2">Add Content</a>
-            <a href="{% url 'profile_view' user.username %}" class="btn btn-primary">View Your Profile</a>
+            <!-- Add Content Button -->
+            <div class="col-12 col-md-auto">
+                <a href="{% url 'add_content' %}" class="btn btn-primary w-100">
+                    Add Content
+                </a>
+            </div>
+
+            <!-- View Profile Button -->
+            <div class="col-12 col-md-auto">
+                <a href="{% url 'profile_view' user.username %}" class="btn btn-primary w-100">
+                    View Your Profile
+                </a>
+            </div>
         </div>
     </div>
 {% endblock hero_buttons %}

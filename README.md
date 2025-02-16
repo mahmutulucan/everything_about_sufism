@@ -30,7 +30,7 @@ The primary goal of the **Everything About Sufism** platform is to bring togethe
     In addition to the features available to non-members, registered members can:
     - Create and share content under various Sufi-related topics.
     - Comment on content, leave likes, and interact with other members.
-    - Create a profile and upload a profile picture.
+    - Create a profile and upload a profile picture (handled via **Cloudinary**).
     - Explore and follow other members’ profiles, and send private messages.
     - Receive instant notifications for interactions related to their activities.
     - Filter content based on members they follow.
@@ -38,9 +38,12 @@ The primary goal of the **Everything About Sufism** platform is to bring togethe
 
 ## Development vs. Production Environments
 - **Development Environment:** 
-    The project is configured with debug=true, using Django’s default settings for easier debugging during development.
+    - The project is configured with `DEBUG=True`, using Django’s default settings for easier debugging during development.
+    - Media storage is handled through **Cloudinary**.
 - **Production Environment:**
-    For production, additional optional settings are provided to integrate services such as Cloudinary for media storage and PostgreSQL for the database. These options are configured through environment variables in the .env file.
+    - **Cloudinary** is used for all media file storage, eliminating the need for a local `media/` folder.
+    - **PostgreSQL** is recommended as the database.
+    - Environment variables manage sensitive settings.
 
 ## Technologies and Tools
 ### Core Frameworks and Libraries
@@ -60,15 +63,10 @@ The primary goal of the **Everything About Sufism** platform is to bring togethe
 - **dotenv:** Loads environment variables from the `.env` file securely using the `python-dotenv` package. It is used in integration with `django-environ` in the project.
 
 ### Data and Storage
-- **sqlite3:** Default database used for development. In production, a more robust database (e.g., **PostgreSQL**) is recommended.
-- **Pillow (11.0.0)**: Python Imaging Library for image processing.
-- **sqlparse (0.5.3)**: Library for parsing SQL statements.
-- **tzdata (2024.2)**: Timezone data for handling time-related functionalities.
-
-### Cloud and Media Management
-- **Cloudinary:** Used for handling media files (images, videos) in production when `USE_CLOUDINARY=True`.
-    - **django-cloudinary-storage (0.3.0):** Manages media file storage in Cloudinary for the Django project.
-- **Local Media Storage:** When `USE_CLOUDINARY=False`, media files are saved locally under `MEDIA_ROOT`.
+- **PostgreSQL**: Recommended database for production.
+- **sqlite3:** Default database used for development.
+- **Cloudinary**: Used for handling media files (images, videos) in both development and production environments.
+- **django-cloudinary-storage (0.3.0)**: Manages media file storage in Cloudinary for the Django project.
 
 ### Custom Features and Middleware
 - **Custom Middleware:** Includes:
@@ -76,7 +74,11 @@ The primary goal of the **Everything About Sufism** platform is to bring togethe
     - **UnreadNotificationsMiddleware:** Manages unread notifications.
     - **VerificationRequiredMiddleware:** Ensures users are verified before performing certain actions.
 - **Custom Authentication Backend:** Implements email-based authentication through the `user.auth_backends.EmailBackend` to manage user login.
-- **Media Management:** Manages user-uploaded media files (e.g., profile pictures) using the `MEDIA_URL` and `MEDIA_ROOT` settings in Django.
+
+### Cloudinary Integration
+- All media files (profile pictures, content images) are stored in **Cloudinary**.
+- No `media/` folder is required in the project directory.
+- The `.env` file must include `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY` and `CLOUDINARY_API_SECRET` for Cloudinary integration.
 
 ## Features
 - **User Interactions:**
@@ -134,19 +136,14 @@ cp .env.example .env
     # DATABASE_URL=postgresql://<DB_USER>:<DB_PASSWORD>@<DB_HOST>:<DB_PORT>/<DB_NAME>
     ```
     If you prefer using PostgreSQL, uncomment the line above and replace it with your database credentials.
-    - **Cloudinary Configuration**:
-        - If you want to use **Cloudinary** for media storage (production environment), set `USE_CLOUDINARY=True` and provide the `CLOUDINARY_URL`:
+    - **Cloudinary Configuration** (for both production and development environments):
+        - If you want to use **Cloudinary** for media storage, provide the following settings in your `.env` file:
         ```bash
-        USE_CLOUDINARY=True
-        CLOUDINARY_URL=cloudinary://API_KEY:API_SECRET@CLOUD_NAME
+        CLOUDINARY_CLOUD_NAME=your_cloud_name_here
+        CLOUDINARY_API_KEY=your_api_key_here
+        CLOUDINARY_API_SECRET=your_api_secret_here
         ```
-        - If you prefer to use **local media storage**, set `USE_CLOUDINARY=False` (default for development):
-        ```bash
-        Kodu kopyala
-        USE_CLOUDINARY=False
-        ```
-
-By default, if no `DATABASE_URL` or `CLOUDINARY_URL` are provided, **SQLite** and **local media storage** will be used.
+        - By default, **Cloudinary** will be used for media storage. If you wish to use **local media storage** instead, you will need to adjust your `MEDIA_ROOT` and related configurations manually.
 
 ### 5. Database Migrations:
 Apply the necessary migrations to set up your database schema:
@@ -204,53 +201,11 @@ The `static/` folder contains essential files required for the project, organize
 
 These static files are essential for the frontend and are managed using Django’s static file handling system. When running the project in production, the `collectstatic` command is used to gather all static files into a single directory, making them ready to serve efficiently.
 
-## Media Folder Setup (For Local Storage)
-Since the `media/` folder is ignored by Git (via `.gitignore`), it won't be included when you clone the project from GitHub. The `media/` folder is essential for storing user-uploaded content, such as profile pictures and other media files when **Cloudinary is not used**.
-
-### Why This Is Necessary
-The `media/` folder is crucial for handling user-uploaded content, including profile pictures and other files related to user-generated content. Without this folder and its proper structure, uploaded files won't be saved correctly. Follow these steps to ensure proper configuration **if you are not using Cloudinary** for media file management:
-
-### Steps to Set Up the Media Folder
-1. **Create the `media/` folder:** In your project root directory, create the `media/` folder if it doesn't already exist:
-```bash
-mkdir media
-```
-
-2. **Create the `profile_pics/` folder inside `media/`:** Inside the `media/` folder, create the `profile_pics/` folder where the uploaded profile pictures will be stored:
-```bash
-mkdir media/profile_pics
-```
-
-3. **Create the `content_images/` folder inside `media/`:** Similarly, create the `content_images/` folder to store images that users upload with their content:
-```bash
-mkdir media/content_images
-```
-
-4. **Default Profile Picture:** The project uses a default profile picture if the user has not uploaded one. This default image is stored in the `static/` directory as `static/img/default_profile_pic.jpg`. When a user does not upload a profile picture, this image will be used automatically. Ensure this file exists in the `static/` directory.
-
-5. **Content Images Default Mapping:** If a user doesn't upload an image for their content, the project uses a default image based on the content type. These default images are stored in the `static/img/` directory. The `get_image_url` function in the `Content` model will return a default image for each content type. The mapping is as follows:
-
-    - **Academic Article:** `static/img/academic_article.jpg`
-    - **Insightful Essay:** `static/img/insightful_essay.jpg`
-    - **Sufi Experience:** `static/img/sufi_experience.jpg`
-    - **Question and Answer:** `static/img/question_answer.jpg`
-    - **Book Review:** `static/img/book_review.jpg`
-    - **Other Types:** `static/img/default.jpg`
-
-    Ensure these images exist in the `static/img/` directory, as the project uses them when no content image is uploaded.
-
-### Conclusion
-This setup ensures that user-uploaded profile pictures and content images are stored properly in the `media/` folder **when Cloudinary is not used**. If a user has not uploaded an image, default images will be used automatically based on the content or profile picture type.
-
-### Cloudinary Integration (If Used)
-If you are using **Cloudinary** for media management, the media files are handled differently, and they will not be stored locally. In this case, the `USE_CLOUDINARY=True` setting should be enabled in the `.env` file, and media files will be uploaded and retrieved from Cloudinary's cloud storage, bypassing the local `media/` folder entirely.
-
 ## Note on `.gitignore`
 The project’s `.gitignore` file is designed to exclude certain files and directories from version control, keeping the repository clean, secure, and free of sensitive or unnecessary data. Here's why the following are excluded:
 
 - `venv/`, `env/`: Virtual environments are specific to each developer's local environment and should be recreated locally. These folders contain installed dependencies that vary by system.
 - `db.sqlite3`: The SQLite database file is excluded to prevent the inclusion of local database data and encourage the use of a production-ready or local database setup.
-- `media/`: This folder contains user-uploaded files such as profile pictures and content images. Since this data is unique to each deployment, it is excluded from version control.
 - `staticfiles/`: The `staticfiles/` folder contains files generated via the `collectstatic` command. These files are specific to the environment (e.g., development, production) and should not be included in the repository to avoid redundancy.
 
 ## Contributing

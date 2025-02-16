@@ -61,26 +61,32 @@
 {% block hero_buttons %}
     <!-- Interactive buttons: Like, Edit, Delete -->
     <div class="container">
-        <div class="d-flex justify-content-start align-items-center mb-3">
+        <div class="row align-items-center g-2">
             <!-- Like/Unlike button if user is logged in -->
             {% if user.is_authenticated %}
-                <form action="{% url 'like_content' content.id %}" method="post" class="me-2">
-                    {% csrf_token %}
-                    <button type="submit" 
-                        class="btn {% if existing_content_like %}btn-danger{% else %}btn-primary{% endif %}">
-                        {% if existing_content_like %}
-                            <i class="fas fa-thumbs-up"></i> Unlike
-                        {% else %}
-                            <i class="far fa-thumbs-up"></i> Like
-                        {% endif %}
-                    </button>
-                </form>
+                <div class="col-12 col-md-auto">
+                    <form action="{% url 'like_content' content.id %}" method="post">
+                        {% csrf_token %}
+                        <button type="submit" 
+                            class="btn {% if existing_content_like %}btn-danger{% else %}btn-primary{% endif %} w-100">
+                            {% if existing_content_like %}
+                                <i class="fas fa-thumbs-up"></i> Unlike
+                            {% else %}
+                                <i class="far fa-thumbs-up"></i> Like
+                            {% endif %}
+                        </button>
+                    </form>
+                </div>
             {% endif %}
 
             <!-- Edit and delete buttons for content owner -->
             {% if content.author == user %}
-                <a href="{% url 'edit_content' content.id %}" class="btn btn-primary me-2">Edit</a>
-                <a href="{% url 'delete_content' content.id %}" class="btn btn-danger me-2">Delete</a>
+                <div class="col-12 col-md-auto">
+                    <a href="{% url 'edit_content' content.id %}" class="btn btn-primary w-100">Edit</a>
+                </div>
+                <div class="col-12 col-md-auto">
+                    <a href="{% url 'delete_content' content.id %}" class="btn btn-danger w-100">Delete</a>
+                </div>
             {% endif %}
         </div>
     </div>

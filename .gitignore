@@ -9,9 +9,6 @@ env/
 virtualenv/
 python_env/
 
-# Media files (uploaded by users)
-media/
-
 # Django migrations (except __init__.py)
 **/migrations/*
 !**/migrations/__init__.py
